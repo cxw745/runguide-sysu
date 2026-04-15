@@ -30,7 +30,6 @@
       grid.innerHTML = contributors.map(c => `
         <a href="${c.html_url}" target="_blank" rel="noopener noreferrer" class="contributor-card" title="@${c.login}">
           <img src="${c.avatar_url}" alt="${c.login}" class="contributor-avatar" loading="lazy" />
-          <span class="contributor-name">${c.login}</span>
         </a>
       `).join('');
     } catch {
@@ -50,57 +49,33 @@
   .contributors-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
+    gap: 8px;
+    justify-content: flex-start;
     margin-bottom: 28px;
-    min-height: 80px;
+    min-height: 40px;
   }
 
   .contributor-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 12px;
-    background-color: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    display: block;
     text-decoration: none;
-    transition: all 0.2s ease;
-    min-width: 90px;
+    transition: transform 0.2s ease;
   }
 
   .contributor-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--accent);
+    transform: scale(1.1);
     opacity: 1;
   }
 
   .contributor-avatar {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 2px solid var(--border);
+    border: 1px solid var(--border);
     transition: border-color 0.2s;
   }
 
   .contributor-card:hover .contributor-avatar {
     border-color: var(--accent);
-  }
-
-  .contributor-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .contributor-card:hover .contributor-name {
-    color: var(--accent);
   }
 
   .contributors-cta {
@@ -115,17 +90,5 @@
     font-size: 14px;
     color: var(--text-muted);
     padding: 20px;
-  }
-
-  @media (max-width: 480px) {
-    .contributor-card {
-      min-width: 76px;
-      padding: 12px 8px;
-    }
-
-    .contributor-avatar {
-      width: 40px;
-      height: 40px;
-    }
   }
 </style>
