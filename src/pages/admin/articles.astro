@@ -156,7 +156,7 @@ import Footer from '../../components/Footer.astro';
 
   async function checkAuth() {
     try {
-      const res = await fetch('/api/auth/me');
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
       if (res.ok) {
         const user = await res.json();
         if (user.isAdmin) {
@@ -174,7 +174,7 @@ import Footer from '../../components/Footer.astro';
 
   async function loadArticles() {
     try {
-      const res = await fetch('/api/articles');
+      const res = await fetch('/api/articles', { credentials: 'include' });
       if (!res.ok) {
         const data = await res.json();
         alert(data.error || '加载文章失败');
@@ -315,6 +315,7 @@ import Footer from '../../components/Footer.astro';
     try {
       const res = await fetch(`/api/articles/${slug}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, author, category, major, tags, excerpt, content, sha }),
       });
@@ -345,6 +346,7 @@ import Footer from '../../components/Footer.astro';
     try {
       const res = await fetch(`/api/articles/${slug}`, {
         method: 'DELETE',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sha }),
       });
