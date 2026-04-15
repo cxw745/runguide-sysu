@@ -50,12 +50,27 @@ function parseFrontmatter(content: string): Record<string, any> {
     }
 
     // 解析 tags 数组
-    const tagsMatch = yamlContent.match(/tags:\n([\s\S]*?)(?=\n\w|$)/);
+    // 匹配 tags: [] 或 tags:\n  - "xxx"\n  - "yyy" 格式
+    const tagsMatch = yamlContent.match(/tags:\s*(\[.*?\]|\n([\s\S]*?))(?=\n\w|$)/);
     if (tagsMatch) {
-      const tagsLines = tagsMatch[1].split('\n');
-      frontmatter.tags = tagsLines
-        .map(line => line.trim().replace(/^-\s*"?/, '').replace(/"?$/, ''))
-        .filter(Boolean);
+      const tagsContent = tagsMatch[1];
+      // 如果是 [] 格式
+      if (tagsContent.trim().startsWith('[')) {
+        try {
+          // 尝试解析 JSON 格式的数组
+          const cleaned = tagsContent.replace(/'/g, '"');
+          frontmatter.tags = JSON.parse(cleaned);
+        } catch {
+          // 解析失败则设为空数组
+          frontmatter.tags = [];
+        }
+      } else {
+        // 解析列表格式
+        const tagsLines = tagsContent.split('\n');
+        frontmatter.tags = tagsLines
+          .map(line => line.trim().replace(/^-\s*"?/, '').replace(/"?$/, ''))
+          .filter(Boolean);
+      }
     }
   }
 
