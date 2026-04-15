@@ -4,11 +4,12 @@ export const prerender = false;
 
 export const GET: APIRoute = async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
+  const redirect = url.searchParams.get('redirect') || '/submit';
 
   if (!code) {
     return new Response(null, {
       status: 302,
-      headers: { Location: '/submit?error=no_code' },
+      headers: { Location: `${redirect}?error=no_code` },
     });
   }
 
@@ -18,7 +19,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   if (!clientId || !clientSecret) {
     return new Response(null, {
       status: 302,
-      headers: { Location: '/submit?error=oauth_not_configured' },
+      headers: { Location: `${redirect}?error=oauth_not_configured` },
     });
   }
 
@@ -42,12 +43,13 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       const errMsg = encodeURIComponent(data.error_description || data.error || 'no_token');
       return new Response(null, {
         status: 302,
-        headers: { Location: `/submit?error=${errMsg}` },
+        headers: { Location: `${redirect}?error=${errMsg}` },
       });
     }
 
     // 使用固定的生产环境 URL，避免 Vercel Edge 返回 localhost
-    const redirectUrl = 'https://runguide-sysu.vercel.app/submit?auth=success';
+    const baseUrl = 'https://runguide-sysu.vercel.app';
+    const redirectUrl = `${baseUrl}${redirect}?auth=success`;
 
     // 生产环境必须使用 SameSite=None 和 Secure 才能跨域设置 cookie
     const cookieValue = [
@@ -69,7 +71,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   } catch {
     return new Response(null, {
       status: 302,
-      headers: { Location: '/submit?error=auth_failed' },
+      headers: { Location: `${redirect}?error=auth_failed` },
     });
   }
 };
