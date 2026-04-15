@@ -8,8 +8,11 @@ export const GET: APIRoute = async ({ redirect, url }) => {
     return new Response(JSON.stringify({ error: 'OAuth client ID not configured' }), { status: 500 });
   }
 
-  // 使用当前请求的 origin，确保本地开发时用 localhost
-  const redirectUri = `${url.origin}/api/auth/callback`;
+  // 使用固定的生产环境 URL，避免动态 origin 导致的问题
+  const isProd = url.hostname !== 'localhost' && !url.hostname.includes('127.0.0.1');
+  const redirectUri = isProd 
+    ? 'https://runguide-sysu.vercel.app/api/auth/callback'
+    : `${url.origin}/api/auth/callback`;
 
   const params = new URLSearchParams({
     client_id: clientId,
