@@ -232,8 +232,9 @@ import PageLayout from '../layouts/PageLayout.astro';
     margin-bottom: 24px;
     padding-bottom: 12px;
     border-bottom: 3px solid var(--accent);
-    display: block;
+    display: inline-block;
     white-space: nowrap;
+    min-width: 120px;
   }
 
   .content-card {
@@ -595,6 +596,7 @@ import PageLayout from '../layouts/PageLayout.astro';
 
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
+      width: 100%;
     }
 
     .links-grid {
