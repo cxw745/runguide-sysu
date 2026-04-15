@@ -1,100 +1,163 @@
-# 📖 广东财经大学飞跃手册
+# 📖 中山大学飞跃手册
 
-由广财学子自发维护的真实经验分享平台。静态站点，零后端，极致轻量。
+由中大学子自发维护的真实经验分享平台。
+
+## 项目简介
+
+这是一个基于 Astro + Vercel 构建的现代化经验分享平台，支持：
+
+- 📝 **在线投稿** - 使用 GitHub OAuth 登录，在线编写 Markdown 文章
+- 🔍 **全文搜索** - 支持文章标题、内容、标签搜索
+- 🎓 **专业分类** - 按专业自动归类文章
+- 🌓 **双主题** - 支持亮色/暗色主题切换
+- 📱 **响应式设计** - 完美适配移动端和桌面端
+
+## 技术栈
+
+- **框架**: [Astro 6](https://astro.build/) - 零 JS 默认输出，极致性能
+- **部署**: [Vercel](https://vercel.com/) - 边缘网络，全球加速
+- **样式**: 原生 CSS 变量 - 无运行时开销
+- **内容**: Content Collections - Markdown 即文章
+- **认证**: GitHub OAuth - 安全可靠
 
 ## 项目结构
 
 ```
 飞跃手册/
-├── docs/                       # 产品文档（与代码分离）
-│   ├── PRD.md                  # 产品需求文档
-│   ├── Backlog.md              # 功能迭代清单
-│   └── BugTracker.md           # Bug 修复记录
 ├── src/
 │   ├── content/articles/       # Markdown 文章存放目录
-│   │   ├── zhuan-zhuanye-jingyan-2024.md
-│   │   ├── bao-yan-bei-kao-zhinan.md
-│   │   └── ...                 # 每篇一个 .md 文件
 │   ├── components/             # Astro 组件
-│   │   ├── Header.astro        # 顶部导航 + 主题切换
+│   │   ├── Header.astro        # 顶部导航
 │   │   ├── Footer.astro        # 页脚
-│   │   ├── Hero.astro          # 首页 Hero 区
-│   │   ├── Features.astro      # 特色卡片区
-│   │   ├── Categories.astro    # 分类入口
-│   │   ├── CTA.astro           # 投稿引导区
-│   │   └── ArticleCard.astro   # 文章卡片组件
-│   ├── layouts/
-│   │   └── BaseLayout.astro    # 基础布局（HTML 骨架）
-│   ├── pages/
+│   │   ├── SearchModal.astro   # 搜索弹窗
+│   │   └── ...
+│   ├── layouts/                # 布局组件
+│   │   ├── BaseLayout.astro    # 基础布局
+│   │   └── PageLayout.astro    # 页面布局（含搜索）
+│   ├── pages/                  # 页面路由
+│   │   ├── api/                # API 端点
+│   │   │   ├── auth/           # OAuth 认证
+│   │   │   ├── submit/         # 投稿接口
+│   │   │   └── contributors/   # 贡献者接口
 │   │   ├── index.astro         # 首页
-│   │   └── articles/
-│   │       ├── index.astro     # 文章列表页
-│   │       └── [slug].astro    # 文章详情页
+│   │   ├── articles/           # 文章相关页面
+│   │   ├── submit/index.astro  # 投稿页面
+│   │   └── about.astro         # 关于页面
 │   └── styles/
-│       └── global.css          # 全局样式 + 设计系统变量
+│       └── global.css          # 全局样式
 ├── public/                     # 静态资源
 ├── astro.config.mjs            # Astro 配置
 ├── content.config.ts           # 内容集合定义
-├── package.json
-└── tsconfig.json
+└── package.json
 ```
 
 ## 快速开始
 
-### 安装依赖
+### 1. 安装依赖
 
 ```bash
 npm install
+# 或
+pnpm install
 ```
 
-### 启动开发服务器
+### 2. 配置环境变量
+
+创建 `.env` 文件：
+
+```env
+# GitHub OAuth 配置
+OAUTH_CLIENT_ID=your_github_oauth_client_id
+OAUTH_CLIENT_SECRET=your_github_oauth_client_secret
+
+# GitHub Token（用于投稿功能）
+GITHUB_TOKEN=your_github_personal_access_token
+GITHUB_REPO=your_username/your_repo
+```
+
+**GitHub OAuth App 设置步骤：**
+
+1. 访问 GitHub Settings → Developer settings → OAuth Apps
+2. 点击 "New OAuth App"
+3. 填写信息：
+   - Application name: 中大飞跃手册
+   - Homepage URL: `http://localhost:4321`（开发）或 `https://your-domain.vercel.app`（生产）
+   - Authorization callback URL: `http://localhost:4321/api/auth/callback`（开发）或 `https://your-domain.vercel.app/api/auth/callback`（生产）
+4. 保存后获取 Client ID 和 Client Secret
+
+### 3. 启动开发服务器
 
 ```bash
 npm run dev
 ```
 
-访问 http://localhost:4321 查看效果。修改文件会自动热更新。
+访问 http://localhost:4321 查看效果。
 
-### 构建生产版本
+### 4. 构建生产版本
 
 ```bash
 npm run build
 ```
 
-构建产物输出到 `dist/` 目录，可直接部署到任意静态托管平台。
+## 如何添加文章
 
-### 本地预览构建结果
+### 方式一：在线投稿（推荐）
 
-```bash
-npm run preview
-```
+1. 访问 `/submit` 页面
+2. 使用 GitHub 账号登录
+3. 填写文章信息（标题、作者、分类、专业、摘要）
+4. 使用 Markdown 编写正文
+5. 提交审核，自动创建 Pull Request
 
-## 如何添加新文章
+### 方式二：直接添加 Markdown 文件
 
-在 `src/content/articles/` 目录下新建一个 `.md` 文件：
+在 `src/content/articles/` 目录下新建 `.md` 文件：
 
 ```markdown
 ---
 title: "你的文章标题"
 author: "作者名"
 date: "2025-04-14"
-category: "考研"                # 必须是以下之一：转专业 / 保研 / 考研 / 出国留学 / 就业 / 其他
+category: "考研"                # 转专业 / 保研 / 考研 / 出国留学 / 就业 / 其他
+major: "计算机科学与技术"       # 专业名称
 tags: ["标签1", "标签2"]         # 可选
-excerpt: "文章摘要，用于列表展示"  # 必填
+excerpt: "文章摘要，用于列表展示"
 ---
 
-正文内容...支持完整的 Markdown 语法：
-- 标题、列表、代码块
-- 表格、引用、图片
-- **粗体**、*斜体*
+正文内容...支持完整的 Markdown 语法
 ```
 
-保存文件后，重新构建或刷新开发服务器即可看到新文章。
-
 **注意事项：**
-- 文件名建议用英文或拼音（如 `kao-yan-math-gonglue.md`），避免中文路径问题
-- `category` 字段必须是枚举值之一，否则会校验失败
-- `excerpt` 用于文章列表页展示，建议控制在 50 字以内
+- `category` 必须是枚举值之一
+- `major` 用于按专业分类展示
+- `excerpt` 建议控制在 50 字以内
+
+## 部署到 Vercel
+
+### 自动部署（推荐）
+
+1. 将代码推送到 GitHub 仓库
+2. 在 [Vercel](https://vercel.com/) 导入项目
+3. 配置环境变量（见上文）
+4. 自动部署完成
+
+### 环境变量配置
+
+在 Vercel Dashboard → Project Settings → Environment Variables 中添加：
+
+| 变量名 | 说明 | 必需 |
+|--------|------|------|
+| `OAUTH_CLIENT_ID` | GitHub OAuth App 的 Client ID | ✅ |
+| `OAUTH_CLIENT_SECRET` | GitHub OAuth App 的 Client Secret | ✅ |
+| `GITHUB_TOKEN` | GitHub Personal Access Token | ✅ |
+| `GITHUB_REPO` | 仓库名，如 `username/repo` | ✅ |
+
+### GitHub OAuth App 生产环境配置
+
+部署后，需要更新 GitHub OAuth App 的回调地址：
+
+- Homepage URL: `https://your-domain.vercel.app`
+- Authorization callback URL: `https://your-domain.vercel.app/api/auth/callback`
 
 ## 设计系统
 
@@ -106,42 +169,30 @@ excerpt: "文章摘要，用于列表展示"  # 必填
 | 强调色 | 黄色 `#E5B044` | 蓝紫 `#8B7CF6` |
 | 卡片 | 白色 `#FFFFFF` | 深色 `#1A1932` |
 
-点击导航栏右侧的 ☀️/🌙 按钮切换主题，偏好自动保存到浏览器本地存储。
+### 分类颜色
 
-### 技术栈
+- 🔄 转专业 - 蓝色
+- 🎓 保研 - 绿色
+- 📚 考研 - 橙色
+- ✈️ 出国留学 - 紫色
+- 💼 就业 - 青色
+- 💡 其他 - 灰色
 
-- **框架**: Astro 6 — 零 JS 默认输出
-- **样式**: 原生 CSS 变量 — 无运行时开销
-- **内容**: Content Collections (glob loader) — Markdown 即文章
-- **部署**: 纯静态 HTML — 可托管到 Vercel/GitHub Pages/Cloudflare Pages 等
+## 功能特性
 
-## 产品文档
+- ✅ GitHub OAuth 登录
+- ✅ 在线 Markdown 编辑器（实时预览）
+- ✅ 文章搜索（标题、内容、标签、作者）
+- ✅ 按分类筛选文章
+- ✅ 按专业分类展示
+- ✅ 响应式设计
+- ✅ 暗色/亮色主题切换
+- ✅ 自动创建 Pull Request
 
-产品相关文档统一放在 `docs/` 目录：
+## 贡献指南
 
-| 文档 | 说明 |
-|------|------|
-| [docs/PRD.md](docs/PRD.md) | 产品需求文档（功能定义、设计规范、信息架构） |
-| [docs/Backlog.md](docs/Backlog.md) | 功能迭代清单（当前进度 + 远期规划） |
-| [docs/BugTracker.md](docs/BugTracker.md) | Bug 修复记录表 |
+欢迎提交 Issue 和 Pull Request！
 
-每次功能迭代或 Bug 修复时，同步更新对应文档。
+## 许可证
 
-## 部署
-
-### Vercel
-
-1. 将仓库推送到 GitHub
-2. 在 Vercel 导入项目，Build Command 设为 `npm run build`
-3. Output Directory 设为 `dist`
-4. 自动部署
-
-### GitHub Pages
-
-1. 运行 `npm run build`
-2. 将 `dist/` 目录推送到 `gh-pages` 分支
-3. 在仓库 Settings → Pages 中选择 `gh-pages` 分支
-
-### Cloudflare Pages
-
-连接 GitHub 仓库，Build Command: `npm run build`, Output Directory: `dist`
+MIT License

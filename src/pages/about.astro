@@ -41,45 +41,45 @@ import PageLayout from '../layouts/PageLayout.astro';
 
       <div class="about-section">
         <h2 class="about-section-title">覆盖方向</h2>
-        <div class="directions-list">
-          <div class="direction-item">
+        <div class="directions-grid">
+          <div class="direction-card">
             <span class="direction-icon">🔄</span>
-            <div>
+            <div class="direction-content">
               <h3>转专业</h3>
               <p>跨院系转专业经验、面试准备、学分转换指南</p>
             </div>
           </div>
-          <div class="direction-item">
+          <div class="direction-card">
             <span class="direction-icon">🎓</span>
-            <div>
+            <div class="direction-content">
               <h3>保研</h3>
               <p>推免资格、夏令营、材料准备全流程</p>
             </div>
           </div>
-          <div class="direction-item">
+          <div class="direction-card">
             <span class="direction-icon">📚</span>
-            <div>
+            <div class="direction-content">
               <h3>考研</h3>
               <p>院校选择、备考规划、复试调剂经验</p>
             </div>
           </div>
-          <div class="direction-item">
+          <div class="direction-card">
             <span class="direction-icon">✈️</span>
-            <div>
+            <div class="direction-content">
               <h3>出国留学</h3>
               <p>选校定位、语言考试、文书写作、申请时间线</p>
             </div>
           </div>
-          <div class="direction-item">
+          <div class="direction-card">
             <span class="direction-icon">💼</span>
-            <div>
+            <div class="direction-content">
               <h3>就业</h3>
               <p>校招准备、实习经验、面试技巧、行业选择</p>
             </div>
           </div>
-          <div class="direction-item">
+          <div class="direction-card">
             <span class="direction-icon">💡</span>
-            <div>
+            <div class="direction-content">
               <h3>其他</h3>
               <p>大学生活规划、竞赛经验、考证指南等</p>
             </div>
@@ -130,30 +130,30 @@ import PageLayout from '../layouts/PageLayout.astro';
           <p>中大飞跃手册的诞生，离不开众多优秀开源项目的启发与鼓舞。正是这些先行者的无私分享，让我们相信：消除信息差的力量，可以改变一个人的选择轨迹。</p>
           <p>特别感谢以下项目，它们是我们灵感的来源：</p>
         </div>
-        <div class="inspiration-grid">
-          <a href="https://csdiy.wiki/" target="_blank" rel="noopener noreferrer" class="inspiration-card">
-            <span class="inspiration-icon">🌍</span>
-            <div class="inspiration-info">
+        <div class="links-list">
+          <a href="https://csdiy.wiki/" target="_blank" rel="noopener noreferrer" class="link-item">
+            <span class="link-icon">🌍</span>
+            <div class="link-content">
               <h3>CS 自学指南</h3>
-              <p>CS DIY Wiki — 计算机科学自学路线与课程推荐</p>
+              <p>计算机科学自学路线与课程推荐</p>
             </div>
-            <span class="inspiration-arrow">→</span>
+            <span class="link-arrow">→</span>
           </a>
-          <a href="https://github.com/qingyujean/awesome-gdufe" target="_blank" rel="noopener noreferrer" class="inspiration-card">
-            <span class="inspiration-icon">🎓</span>
-            <div class="inspiration-info">
+          <a href="https://github.com/qingyujean/awesome-gdufe" target="_blank" rel="noopener noreferrer" class="link-item">
+            <span class="link-icon">🎓</span>
+            <div class="link-content">
               <h3>Awesome GDUFE</h3>
               <p>广财学习资源与经验整理</p>
             </div>
-            <span class="inspiration-arrow">→</span>
+            <span class="link-arrow">→</span>
           </a>
-          <a href="https://survivesjtu.github.io/SJTU-Application/" target="_blank" rel="noopener noreferrer" class="inspiration-card">
-            <span class="inspiration-icon">📘</span>
-            <div class="inspiration-info">
+          <a href="https://survivesjtu.github.io/SJTU-Application/" target="_blank" rel="noopener noreferrer" class="link-item">
+            <span class="link-icon">📘</span>
+            <div class="link-content">
               <h3>交大生存手册</h3>
-              <p>上海交通大学学生经验分享手册，国内高校手册类项目的先驱</p>
+              <p>上海交通大学学生经验分享手册</p>
             </div>
-            <span class="inspiration-arrow">→</span>
+            <span class="link-arrow">→</span>
           </a>
         </div>
         <div class="about-card" style="margin-top: 16px;">
@@ -166,31 +166,31 @@ import PageLayout from '../layouts/PageLayout.astro';
         <div class="about-card">
           <p>这里收录了其他高校的开源经验手册项目，它们同样在为消除信息差而努力。如果你也在做类似的事情，欢迎联系我们互换友链。</p>
         </div>
-        <div class="friendlinks-grid">
-          <a href="https://survivesjtu.github.io/SJTU-Application/" target="_blank" rel="noopener noreferrer" class="friendlink-card">
-            <span class="friendlink-emoji">📘</span>
-            <div class="friendlink-info">
+        <div class="friendlinks-list">
+          <a href="https://survivesjtu.github.io/SJTU-Application/" target="_blank" rel="noopener noreferrer" class="friendlink-item">
+            <span class="friendlink-icon">📘</span>
+            <div class="friendlink-content">
               <h3>交大生存手册</h3>
               <p>上海交通大学</p>
             </div>
           </a>
-          <a href="https://pkuphoto.github.io/pkuphoto.github.io/" target="_blank" rel="noopener noreferrer" class="friendlink-card">
-            <span class="friendlink-emoji">📸</span>
-            <div class="friendlink-info">
+          <a href="https://pkuphoto.github.io/pkuphoto.github.io/" target="_blank" rel="noopener noreferrer" class="friendlink-item">
+            <span class="friendlink-icon">📸</span>
+            <div class="friendlink-content">
               <h3>北大生存手册</h3>
               <p>北京大学</p>
             </div>
           </a>
-          <a href="https://csdiy.wiki/" target="_blank" rel="noopener noreferrer" class="friendlink-card">
-            <span class="friendlink-emoji">🌍</span>
-            <div class="friendlink-info">
+          <a href="https://csdiy.wiki/" target="_blank" rel="noopener noreferrer" class="friendlink-item">
+            <span class="friendlink-icon">🌍</span>
+            <div class="friendlink-content">
               <h3>CS 自学指南</h3>
               <p>计算机科学自学路线</p>
             </div>
           </a>
-          <a href="https://github.com/ruanyf/weekly" target="_blank" rel="noopener noreferrer" class="friendlink-card">
-            <span class="friendlink-emoji">📰</span>
-            <div class="friendlink-info">
+          <a href="https://github.com/ruanyf/weekly" target="_blank" rel="noopener noreferrer" class="friendlink-item">
+            <span class="friendlink-icon">📰</span>
+            <div class="friendlink-content">
               <h3>阮一峰科技周刊</h3>
               <p>技术视野与资源推荐</p>
             </div>
@@ -233,7 +233,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .about-section {
-    max-width: 720px;
+    max-width: 800px;
     margin: 0 auto 48px;
   }
 
@@ -245,10 +245,11 @@ import PageLayout from '../layouts/PageLayout.astro';
     padding-bottom: 8px;
     border-bottom: 2px solid var(--accent);
     display: inline-block;
+    white-space: nowrap;
   }
 
   .about-card {
-    padding: 28px 32px;
+    padding: 24px 28px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -273,8 +274,10 @@ import PageLayout from '../layouts/PageLayout.astro';
     display: flex;
     gap: 12px;
     margin-top: 20px;
+    flex-wrap: wrap;
   }
 
+  /* 我们的使命 - 3列网格 */
   .mission-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -282,7 +285,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .mission-card {
-    padding: 24px 20px;
+    padding: 20px 16px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -290,59 +293,74 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .mission-icon {
-    font-size: 32px;
+    font-size: 28px;
     display: block;
-    margin-bottom: 12px;
-  }
-
-  .mission-card h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
     margin-bottom: 8px;
   }
 
-  .mission-card p {
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text-secondary);
-  }
-
-  .directions-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .direction-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 16px 20px;
-    background-color: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-  }
-
-  .direction-icon {
-    font-size: 24px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .direction-item h3 {
+  .mission-card h3 {
     font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    white-space: nowrap;
   }
 
-  .direction-item p {
+  .mission-card p {
     font-size: 13px;
     line-height: 1.5;
     color: var(--text-secondary);
   }
 
+  /* 覆盖方向 - 2列网格，横向卡片 */
+  .directions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .direction-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .direction-card:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .direction-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .direction-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .direction-content h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .direction-content p {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* 数据与影响力 */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -350,7 +368,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .stat-card {
-    padding: 24px 16px;
+    padding: 20px 16px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -359,15 +377,17 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   .stat-num {
     display: block;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--accent);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    white-space: nowrap;
   }
 
   .stat-label {
     font-size: 13px;
     color: var(--text-secondary);
+    white-space: nowrap;
   }
 
   .disclaimer {
@@ -375,112 +395,138 @@ import PageLayout from '../layouts/PageLayout.astro';
     border-color: transparent;
   }
 
-  .inspiration-grid {
+  /* 致谢与友链 - 列表样式 */
+  .links-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     margin-top: 16px;
   }
 
-  .inspiration-card {
+  .link-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
+    gap: 14px;
+    padding: 12px 16px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     text-decoration: none;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
   }
 
-  .inspiration-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+  .link-item:hover {
     border-color: var(--accent);
+    transform: translateX(4px);
     opacity: 1;
   }
 
-  .inspiration-icon {
-    font-size: 28px;
+  .link-icon {
+    font-size: 22px;
     flex-shrink: 0;
   }
 
-  .inspiration-info {
+  .link-content {
     flex: 1;
     min-width: 0;
   }
 
-  .inspiration-info h3 {
-    font-size: 15px;
+  .link-content h3 {
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    white-space: nowrap;
   }
 
-  .inspiration-info p {
-    font-size: 13px;
-    line-height: 1.5;
+  .link-content p {
+    font-size: 12px;
     color: var(--text-secondary);
     margin: 0;
   }
 
-  .inspiration-arrow {
-    font-size: 16px;
+  .link-arrow {
+    font-size: 14px;
     color: var(--text-muted);
     transition: transform 0.2s, color 0.2s;
     flex-shrink: 0;
   }
 
-  .inspiration-card:hover .inspiration-arrow {
+  .link-item:hover .link-arrow {
     transform: translateX(4px);
     color: var(--accent);
   }
 
-  .friendlinks-grid {
+  /* 开源手册友链 - 2列网格 */
+  .friendlinks-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-top: 16px;
   }
 
-  .friendlink-card {
+  .friendlink-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px 18px;
+    padding: 12px 14px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     text-decoration: none;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
   }
 
-  .friendlink-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+  .friendlink-item:hover {
     border-color: var(--accent);
+    transform: translateY(-2px);
     opacity: 1;
   }
 
-  .friendlink-emoji {
-    font-size: 24px;
+  .friendlink-icon {
+    font-size: 22px;
     flex-shrink: 0;
   }
 
-  .friendlink-info h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 2px;
+  .friendlink-content {
+    flex: 1;
+    min-width: 0;
   }
 
-  .friendlink-info p {
-    font-size: 12px;
+  .friendlink-content h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1px;
+    white-space: nowrap;
+  }
+
+  .friendlink-content p {
+    font-size: 11px;
     color: var(--text-secondary);
     margin: 0;
   }
 
+  /* 平板设备 */
+  @media (max-width: 960px) {
+    .mission-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .directions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .friendlinks-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* 移动端 */
   @media (max-width: 720px) {
     .mission-grid {
       grid-template-columns: 1fr;
@@ -490,12 +536,26 @@ import PageLayout from '../layouts/PageLayout.astro';
       grid-template-columns: repeat(2, 1fr);
     }
 
+    .directions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .friendlinks-list {
+      grid-template-columns: 1fr;
+    }
+
     .about-links {
       flex-direction: column;
     }
 
-    .friendlinks-grid {
-      grid-template-columns: 1fr;
+    .about-section-title,
+    .mission-card h3,
+    .direction-content h3,
+    .stat-num,
+    .stat-label,
+    .link-content h3,
+    .friendlink-content h3 {
+      white-space: normal;
     }
   }
 </style>
