@@ -91,7 +91,7 @@ import PageLayout from '../layouts/PageLayout.astro';
           </div>
         </section>
 
-        <section class="about-section">
+        <section class="about-section stats-section">
           <h2 class="section-title">数据与影响力</h2>
           <div class="stats-grid">
             <div class="stat-item">
@@ -370,6 +370,25 @@ import PageLayout from '../layouts/PageLayout.astro';
     margin: 0;
   }
 
+  /* Stats Section - 左右布局 */
+  .stats-section {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-start;
+  }
+
+  .stats-section .section-title {
+    flex-shrink: 0;
+    width: 120px;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .stats-section .stats-grid {
+    flex: 1;
+  }
+
   /* Stats Grid */
   .stats-grid {
     display: grid;
@@ -547,6 +566,16 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   @media (max-width: 768px) {
+    .stats-section {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-section .section-title {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
     .about-title {
       font-size: 28px;
       white-space: normal;
