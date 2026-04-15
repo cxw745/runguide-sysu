@@ -157,27 +157,36 @@ import Footer from '../../components/Footer.astro';
   async function checkAuth() {
     try {
       const res = await fetch('/api/auth/me', { credentials: 'include' });
-      if (res.ok) {
-        const user = await res.json();
-        if (user.isAdmin) {
-          currentUser = user;
-          showSection(loadingSection);
-          await loadArticles();
-          return;
-        } else {
-          alert('您没有管理员权限');
-        }
+      if (!res.ok) {
+        // 未登录或登录过期，显示登录界面
+        showSection(authSection);
+        return;
       }
-    } catch {}
-    showSection(authSection);
+      
+      const user = await res.json();
+      if (user.isAdmin) {
+        currentUser = user;
+        showSection(loadingSection);
+        await loadArticles();
+        return;
+      } else {
+        alert('您没有管理员权限');
+        showSection(authSection);
+        return;
+      }
+    } catch (err) {
+      console.error('Check auth error:', err);
+      showSection(authSection);
+    }
   }
 
   async function loadArticles() {
     try {
       const res = await fetch('/api/articles', { credentials: 'include' });
       if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || '加载文章失败');
+        const data = await res.json().catch(() => ({ error: '未知错误' }));
+        console.error('Load articles error:', res.status, data);
+        alert(data.error || `加载文章失败 (${res.status})`);
         showSection(authSection);
         return;
       }
@@ -191,8 +200,9 @@ import Footer from '../../components/Footer.astro';
       
       renderArticles(allArticles);
       showSection(articlesSection);
-    } catch {
-      alert('加载文章失败');
+    } catch (err) {
+      console.error('Load articles exception:', err);
+      alert('加载文章失败: ' + err.message);
       showSection(authSection);
     }
   }

@@ -16,6 +16,14 @@ interface Article {
   sha: string;
 }
 
+// CORS 响应头
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://runguide-sysu.vercel.app',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Credentials': 'true',
+};
+
 // 解析 markdown 文件的 frontmatter
 function parseFrontmatter(content: string): Record<string, any> {
   const frontmatter: Record<string, any> = {};
@@ -60,11 +68,22 @@ function getBody(content: string): string {
   return match ? match[1].trim() : content;
 }
 
+// OPTIONS 请求处理（预检请求）
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+};
+
 export const GET: APIRoute = async ({ cookies }) => {
   const token = cookies.get('gh_token')?.value;
 
   if (!token) {
-    return new Response(JSON.stringify({ error: '请先登录' }), { status: 401 });
+    return new Response(JSON.stringify({ error: '请先登录' }), { 
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   // 验证用户身份并检查是否为管理员
@@ -77,18 +96,27 @@ export const GET: APIRoute = async ({ cookies }) => {
       },
     });
     if (!userRes.ok) {
-      return new Response(JSON.stringify({ error: '登录已过期' }), { status: 401 });
+      return new Response(JSON.stringify({ error: '登录已过期' }), { 
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
     user = await userRes.json() as { login: string };
   } catch {
-    return new Response(JSON.stringify({ error: '获取用户信息失败' }), { status: 401 });
+    return new Response(JSON.stringify({ error: '获取用户信息失败' }), { 
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   const repo = import.meta.env.GITHUB_REPO || 'cxw745/runguide-sysu';
   const githubToken = import.meta.env.GITHUB_TOKEN;
 
   if (!githubToken) {
-    return new Response(JSON.stringify({ error: '服务端配置错误' }), { status: 500 });
+    return new Response(JSON.stringify({ error: '服务端配置错误' }), { 
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   const headers: Record<string, string> = {
@@ -103,14 +131,20 @@ export const GET: APIRoute = async ({ cookies }) => {
     });
 
     if (!collaboratorsRes.ok) {
-      return new Response(JSON.stringify({ error: '无法获取协作者信息' }), { status: 403 });
+      return new Response(JSON.stringify({ error: '无法获取协作者信息' }), { 
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const collaborators = await collaboratorsRes.json() as { login: string }[];
     const isAdmin = collaborators.some(c => c.login.toLowerCase() === user.login.toLowerCase());
 
     if (!isAdmin) {
-      return new Response(JSON.stringify({ error: '只有管理员可以查看文章列表' }), { status: 403 });
+      return new Response(JSON.stringify({ error: '只有管理员可以查看文章列表' }), { 
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // 获取文章目录下的所有文件
@@ -119,7 +153,10 @@ export const GET: APIRoute = async ({ cookies }) => {
     });
 
     if (!contentsRes.ok) {
-      return new Response(JSON.stringify({ error: '无法获取文章列表' }), { status: 500 });
+      return new Response(JSON.stringify({ error: '无法获取文章列表' }), { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const files = await contentsRes.json() as { name: string; path: string; sha: string; download_url: string }[];
@@ -164,10 +201,13 @@ export const GET: APIRoute = async ({ cookies }) => {
       articles,
     }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error fetching articles:', error);
-    return new Response(JSON.stringify({ error: '获取文章列表失败' }), { status: 500 });
+    return new Response(JSON.stringify({ error: '获取文章列表失败' }), { 
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 };
