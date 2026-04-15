@@ -1,5 +1,7 @@
 # build output
 dist/
+.vercel/
+
 # generated types
 .astro/
 
@@ -32,4 +34,3 @@ code/
 
 # product docs (keep local only)
 docs/
-
