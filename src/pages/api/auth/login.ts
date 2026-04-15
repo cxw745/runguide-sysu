@@ -16,6 +16,8 @@ export const GET: APIRoute = async ({ redirect }) => {
     redirect_uri: redirectUri,
     scope: 'read:user user:email',
     response_type: 'code',
+    // 强制每次登录都重新授权，确保用户可以选择不同的账号
+    prompt: 'consent',
   });
 
   return redirect(`https://github.com/login/oauth/authorize?${params.toString()}`);
