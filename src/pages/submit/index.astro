@@ -59,6 +59,10 @@ import Footer from '../../components/Footer.astro';
               </select>
             </div>
             <div class="form-group">
+              <label for="article-major">专业</label>
+              <input type="text" id="article-major" name="major" placeholder="如：金融学、计算机科学与技术" />
+            </div>
+            <div class="form-group">
               <label for="article-tags">标签</label>
               <input type="text" id="article-tags" name="tags" placeholder="用逗号分隔，如：考研,985,备考" />
             </div>
@@ -88,6 +92,7 @@ import Footer from '../../components/Footer.astro';
                 <button type="button" data-action="table" title="表格">表格</button>
                 <span class="toolbar-divider"></span>
                 <button type="button" data-action="hr" title="分隔线">——</button>
+                <button type="button" data-action="template" title="插入模板" class="template-btn">📋 模板</button>
               </div>
             </div>
             <div class="editor-body">
@@ -142,7 +147,7 @@ import Footer from '../../components/Footer.astro';
 <script>
   const ARTICLE_TEMPLATE = `## 背景
 
-（在这里介绍你的背景和经历，让读者了解你的起点）
+（在这里介绍你的背景和经历，让读者了解你的起点。例如：专业、年级、为什么做出这个选择）
 
 ## 过程
 
@@ -163,6 +168,13 @@ import Footer from '../../components/Footer.astro';
 1. **建议一**：具体可操作的建议
 2. **建议二**：具体可操作的建议
 3. **建议三**：具体可操作的建议
+
+## 踩过的坑
+
+（分享你走过的弯路，帮助后来者避坑）
+
+- 坑一：描述问题 + 正确做法
+- 坑二：描述问题 + 正确做法
 
 ## 写在最后
 
@@ -192,13 +204,15 @@ import Footer from '../../components/Footer.astro';
 
   async function checkAuth() {
     try {
-      const res = await fetch('/api/auth/me');
+      const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
       if (res.ok) {
         currentUser = await res.json();
         showEditor();
         return;
       }
-    } catch {}
+    } catch (e) {
+      console.error('Auth check failed:', e);
+    }
     showSection(authSection);
   }
 
@@ -219,9 +233,7 @@ import Footer from '../../components/Footer.astro';
   }
 
   logoutBtn.addEventListener('click', async () => {
-    try {
-      document.cookie = 'gh_token=; Path=/; Max-Age=0';
-    } catch {}
+    document.cookie = 'gh_token=; Path=/; Max-Age=0; SameSite=Lax';
     currentUser = null;
     showSection(authSection);
   });
@@ -229,6 +241,7 @@ import Footer from '../../components/Footer.astro';
   newArticleBtn.addEventListener('click', () => {
     document.getElementById('article-title').value = '';
     document.getElementById('article-category').value = '';
+    document.getElementById('article-major').value = '';
     document.getElementById('article-tags').value = '';
     document.getElementById('article-excerpt').value = '';
     bodyTextarea.value = ARTICLE_TEMPLATE;
@@ -250,61 +263,33 @@ import Footer from '../../components/Footer.astro';
   document.querySelectorAll('.editor-toolbar button[data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action;
+
+      if (action === 'template') {
+        if (bodyTextarea.value && !confirm('插入模板将覆盖当前内容，是否继续？')) return;
+        bodyTextarea.value = ARTICLE_TEMPLATE;
+        updatePreview();
+        bodyTextarea.focus();
+        return;
+      }
+
       const start = bodyTextarea.selectionStart;
       const end = bodyTextarea.selectionEnd;
       const selected = bodyTextarea.value.substring(start, end);
       let before = '', after = '', newCursorPos = start;
 
       switch (action) {
-        case 'h2':
-          before = '## '; after = '';
-          newCursorPos = start + 3;
-          break;
-        case 'h3':
-          before = '### '; after = '';
-          newCursorPos = start + 4;
-          break;
-        case 'bold':
-          before = '**'; after = '**';
-          newCursorPos = selected ? start + before.length + selected.length + after.length : start + 2;
-          break;
-        case 'italic':
-          before = '*'; after = '*';
-          newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1;
-          break;
-        case 'code':
-          before = '`'; after = '`';
-          newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1;
-          break;
-        case 'link':
-          before = '['; after = '](url)';
-          newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1;
-          break;
-        case 'image':
-          before = '!['; after = '](url)';
-          newCursorPos = selected ? start + before.length + selected.length + after.length : start + 2;
-          break;
-        case 'quote':
-          before = '> '; after = '';
-          newCursorPos = start + 2;
-          break;
-        case 'ul':
-          before = '- '; after = '';
-          newCursorPos = start + 2;
-          break;
-        case 'ol':
-          before = '1. '; after = '';
-          newCursorPos = start + 3;
-          break;
-        case 'table':
-          before = '\n| 列1 | 列2 | 列3 |\n|------|------|------|\n| 内容 | 内容 | 内容 |\n';
-          after = '';
-          newCursorPos = start + before.length;
-          break;
-        case 'hr':
-          before = '\n---\n'; after = '';
-          newCursorPos = start + before.length;
-          break;
+        case 'h2': before = '## '; after = ''; newCursorPos = start + 3; break;
+        case 'h3': before = '### '; after = ''; newCursorPos = start + 4; break;
+        case 'bold': before = '**'; after = '**'; newCursorPos = selected ? start + before.length + selected.length + after.length : start + 2; break;
+        case 'italic': before = '*'; after = '*'; newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1; break;
+        case 'code': before = '`'; after = '`'; newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1; break;
+        case 'link': before = '['; after = '](url)'; newCursorPos = selected ? start + before.length + selected.length + after.length : start + 1; break;
+        case 'image': before = '!['; after = '](url)'; newCursorPos = selected ? start + before.length + selected.length + after.length : start + 2; break;
+        case 'quote': before = '> '; after = ''; newCursorPos = start + 2; break;
+        case 'ul': before = '- '; after = ''; newCursorPos = start + 2; break;
+        case 'ol': before = '1. '; after = ''; newCursorPos = start + 3; break;
+        case 'table': before = '\n| 列1 | 列2 | 列3 |\n|------|------|------|\n| 内容 | 内容 | 内容 |\n'; after = ''; newCursorPos = start + before.length; break;
+        case 'hr': before = '\n---\n'; after = ''; newCursorPos = start + before.length; break;
       }
 
       bodyTextarea.value =
@@ -321,6 +306,7 @@ import Footer from '../../components/Footer.astro';
     const title = document.getElementById('article-title').value.trim();
     const author = document.getElementById('article-author').value.trim();
     const category = document.getElementById('article-category').value;
+    const major = document.getElementById('article-major').value.trim();
     const tagsStr = document.getElementById('article-tags').value.trim();
     const excerpt = document.getElementById('article-excerpt').value.trim();
     const body = bodyTextarea.value;
@@ -338,8 +324,9 @@ import Footer from '../../components/Footer.astro';
     try {
       const res = await fetch('/api/submit', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, author, category, tags, excerpt, body }),
+        body: JSON.stringify({ title, author, category, major, tags, excerpt, body }),
       });
 
       const data = await res.json();
@@ -363,7 +350,7 @@ import Footer from '../../components/Footer.astro';
     window.history.replaceState({}, '', '/submit');
   }
   if (params.get('error')) {
-    alert('登录失败: ' + decodeURIComponent(params.get('error')));
+    alert('登录失败: ' + decodeURIComponent(params.get('error') || ''));
     window.history.replaceState({}, '', '/submit');
   }
 
@@ -583,6 +570,11 @@ import Footer from '../../components/Footer.astro';
     color: var(--text-primary);
     background-color: var(--accent-light);
     border-color: var(--border);
+  }
+
+  .template-btn {
+    color: var(--accent) !important;
+    font-weight: 500;
   }
 
   .toolbar-divider {

@@ -1,13 +1,10 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 import Hero from '../components/Hero.astro';
 import Features from '../components/Features.astro';
 import Categories from '../components/Categories.astro';
 import CTA from '../components/CTA.astro';
 import Contributors from '../components/Contributors.astro';
-import SearchModal from '../components/SearchModal.astro';
 import { getCollection } from 'astro:content';
 
 const allArticles = await getCollection('articles');
@@ -15,20 +12,9 @@ const sortedArticles = allArticles.sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 const latestArticles = sortedArticles.slice(0, 6);
-
-const searchArticles = sortedArticles.map(a => ({
-  id: a.id,
-  title: a.data.title,
-  excerpt: a.data.excerpt,
-  category: a.data.category,
-  tags: a.data.tags,
-  author: a.data.author,
-}));
 ---
 
-<BaseLayout title="首页">
-  <Header />
-  <SearchModal articles={searchArticles} />
+<PageLayout title="首页">
   <main>
     <Hero />
     <Features />
@@ -62,8 +48,7 @@ const searchArticles = sortedArticles.map(a => ({
     <CTA />
     <Contributors />
   </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>
 
 <style>
   .latest {

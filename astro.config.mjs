@@ -1,15 +1,10 @@
 import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'server',
-  adapter: cloudflare({
-    runtime: {
-      mode: 'local',
-      type: 'pages',
-    },
-  }),
-  site: 'https://sysu-leap.pages.dev',
+  adapter: vercel(),
+  site: 'https://sysu-leap.vercel.app',
   prefetch: {
     prefetchAll: true,
   },

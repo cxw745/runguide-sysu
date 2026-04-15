@@ -1,13 +1,4 @@
 ---
-const categories = [
-  { name: '转专业', icon: '🔄' },
-  { name: '保研', icon: '🎓' },
-  { name: '考研', icon: '📚' },
-  { name: '出国留学', icon: '✈️' },
-  { name: '就业', icon: '💼' },
-  { name: '其他', icon: '💡' },
-];
-
 const currentPath = Astro.url.pathname;
 ---
 
@@ -21,17 +12,6 @@ const currentPath = Astro.url.pathname;
       <a href="/" class:list={['nav-link', { active: currentPath === '/' }]}>首页</a>
       <a href="/articles" class:list={['nav-link', { active: currentPath.startsWith('/articles') }]}>文章</a>
       <a href="/submit" class:list={['nav-link', { active: currentPath === '/submit' }]}>投稿</a>
-      <div class="nav-categories">
-        <span class="nav-link">分类 ▾</span>
-        <div class="nav-dropdown">
-          {categories.map(cat => (
-            <a href={`/articles?category=${encodeURIComponent(cat.name)}`} class="nav-dropdown-item">
-              <span class="nav-dropdown-icon">{cat.icon}</span>
-              {cat.name}
-            </a>
-          ))}
-        </div>
-      </div>
       <a href="/about" class:list={['nav-link', { active: currentPath === '/about' }]}>关于</a>
     </nav>
     <div class="header-actions">
@@ -52,11 +32,6 @@ const currentPath = Astro.url.pathname;
     <a href="/" class="mobile-menu-link">首页</a>
     <a href="/articles" class="mobile-menu-link">文章</a>
     <a href="/submit" class="mobile-menu-link">📝 投稿</a>
-    {categories.map(cat => (
-      <a href={`/articles?category=${encodeURIComponent(cat.name)}`} class="mobile-menu-link">
-        {cat.icon} {cat.name}
-      </a>
-    ))}
     <a href="/about" class="mobile-menu-link">📖 关于我们</a>
   </div>
 </header>
@@ -167,49 +142,6 @@ const currentPath = Astro.url.pathname;
   .nav-link.active {
     color: var(--accent);
     font-weight: 600;
-  }
-
-  .nav-categories {
-    position: relative;
-  }
-
-  .nav-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    min-width: 160px;
-    padding: 8px;
-    background-color: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-hover);
-    z-index: 50;
-  }
-
-  .nav-categories:hover .nav-dropdown {
-    display: block;
-  }
-
-  .nav-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    font-size: 14px;
-    color: var(--text-secondary);
-    border-radius: var(--radius-sm);
-    transition: all 0.15s;
-  }
-
-  .nav-dropdown-item:hover {
-    color: var(--text-primary);
-    background-color: var(--accent-light);
-    opacity: 1;
-  }
-
-  .nav-dropdown-icon {
-    font-size: 16px;
   }
 
   .header-actions {

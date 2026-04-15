@@ -34,15 +34,16 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     title: string;
     author: string;
     category: string;
+    major: string;
     tags: string[];
     excerpt: string;
     body: string;
   };
 
-  const { title, author, category, tags, excerpt, body: articleBody } = body;
+  const { title, author, category, major, tags, excerpt, body: articleBody } = body;
 
-  if (!title || !author || !category || !excerpt || !articleBody) {
-    return new Response(JSON.stringify({ error: '请填写所有必填字段（标题、作者、分类、摘要、正文）' }), { status: 400 });
+  if (!title || !author || !category || !major || !excerpt || !articleBody) {
+    return new Response(JSON.stringify({ error: '请填写所有必填字段（标题、作者、分类、专业、摘要、正文）' }), { status: 400 });
   }
 
   const validCategories = ['转专业', '保研', '考研', '出国留学', '就业', '其他'];
@@ -73,6 +74,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     `author: "${author.replace(/"/g, '\\"')}"`,
     `date: "${today}"`,
     `category: "${category}"`,
+    `major: "${major.replace(/"/g, '\\"')}"`,
     tagsYaml,
     `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
     '---',
@@ -142,6 +144,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
           `| 标题 | ${title} |`,
           `| 作者 | ${author} |`,
           `| 分类 | ${category} |`,
+          `| 专业 | ${major} |`,
           `| 投稿人 | @${user.login} |`,
           `| 日期 | ${today} |`,
           '',

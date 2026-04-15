@@ -1,7 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection } from 'astro:content';
 
 const allArticles = await getCollection('articles');
@@ -34,8 +32,7 @@ sortedArticles.forEach(article => {
 const majorKeys = Array.from(articlesByMajor.keys()).sort();
 ---
 
-<BaseLayout title="文章">
-  <Header />
+<PageLayout title="文章">
   <main class="articles-page">
     <div class="container">
       <div class="articles-page-header">
@@ -121,8 +118,7 @@ const majorKeys = Array.from(articlesByMajor.keys()).sort();
       </div>
     </div>
   </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>
 
 <script>
   const params = new URLSearchParams(window.location.search);

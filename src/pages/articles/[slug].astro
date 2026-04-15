@@ -1,7 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export const prerender = true;
@@ -26,8 +24,7 @@ const prevArticle = currentIndex > 0 ? sortedArticles[currentIndex - 1] : null;
 const nextArticle = currentIndex < sortedArticles.length - 1 ? sortedArticles[currentIndex + 1] : null;
 ---
 
-<BaseLayout title={article.data.title} description={article.data.excerpt}>
-  <Header />
+<PageLayout title={article.data.title} description={article.data.excerpt}>
   <main class="article-page">
     <div class="container">
       <article class="article-detail">
@@ -67,8 +64,7 @@ const nextArticle = currentIndex < sortedArticles.length - 1 ? sortedArticles[cu
       </article>
     </div>
   </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>
 
 <style>
   .article-page {

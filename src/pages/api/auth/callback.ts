@@ -1,17 +1,23 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async ({ url, redirect, cookies }) => {
+export const GET: APIRoute = async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
 
   if (!code) {
-    return redirect('/submit?error=no_code');
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/submit?error=no_code' },
+    });
   }
 
   const clientId = import.meta.env.OAUTH_CLIENT_ID;
   const clientSecret = import.meta.env.OAUTH_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
-    return redirect('/submit?error=oauth_not_configured');
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/submit?error=oauth_not_configured' },
+    });
   }
 
   try {
@@ -30,23 +36,37 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
 
     const data = await response.json() as { error?: string; error_description?: string; access_token?: string };
 
-    if (data.error) {
-      return redirect(`/submit?error=${encodeURIComponent(data.error_description || data.error)}`);
+    if (data.error || !data.access_token) {
+      const errMsg = encodeURIComponent(data.error_description || data.error || 'no_token');
+      return new Response(null, {
+        status: 302,
+        headers: { Location: `/submit?error=${errMsg}` },
+      });
     }
 
-    // 使用当前请求的 origin，确保本地开发时跳转回 localhost
-    const site = `${url.origin}`;
+    const isSecure = url.protocol === 'https:';
+    const redirectUrl = `${url.origin}/submit?auth=success`;
 
-    cookies.set('gh_token', data.access_token!, {
-      path: '/',
-      httpOnly: true,
-      secure: url.protocol === 'https:',
-      sameSite: 'lax',
-      maxAge: 86400,
+    const cookieValue = [
+      `gh_token=${data.access_token}`,
+      'Path=/',
+      'HttpOnly',
+      isSecure ? 'Secure' : '',
+      'SameSite=Lax',
+      'Max-Age=86400',
+    ].filter(Boolean).join('; ');
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: redirectUrl,
+        'Set-Cookie': cookieValue,
+      },
     });
-
-    return redirect(`${site}/submit?auth=success`);
   } catch {
-    return redirect('/submit?error=auth_failed');
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/submit?error=auth_failed' },
+    });
   }
 };
