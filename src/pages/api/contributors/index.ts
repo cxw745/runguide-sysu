@@ -1,12 +1,11 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async () => {
-  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runguide-sysu';
+  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runaway745';
   const githubToken = import.meta.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github.v3+json',
-    'User-Agent': 'sysu-leap-handbook',
   };
 
   if (githubToken) {
@@ -19,17 +18,8 @@ export const GET: APIRoute = async () => {
       { headers }
     );
 
-    // 如果 API 返回 403 或 401，可能是未认证限制，返回空数组
     if (!contributorsRes.ok) {
-      console.error('GitHub API error:', contributorsRes.status, await contributorsRes.text());
-      // 返回空数组而不是错误，避免页面崩溃
-      return new Response(JSON.stringify([]), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 's-maxage=3600, stale-while-revalidate=600',
-        },
-      });
+      return new Response(JSON.stringify({ error: 'Failed to fetch contributors' }), { status: contributorsRes.status });
     }
 
     const contributors = await contributorsRes.json() as { type: string; login: string; avatar_url: string; html_url: string; contributions: number }[];
@@ -50,15 +40,7 @@ export const GET: APIRoute = async () => {
         'Cache-Control': 's-maxage=3600, stale-while-revalidate=600',
       },
     });
-  } catch (error) {
-    console.error('Failed to fetch contributors:', error);
-    // 返回空数组而不是错误
-    return new Response(JSON.stringify([]), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 's-maxage=3600, stale-while-revalidate=600',
-      },
-    });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Failed to fetch contributors' }), { status: 500 });
   }
 };
