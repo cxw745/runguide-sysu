@@ -49,29 +49,31 @@
   .contributors-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 4px;
     justify-content: flex-start;
     margin-bottom: 28px;
-    min-height: 40px;
+    min-height: 28px;
   }
 
   .contributor-card {
     display: block;
     text-decoration: none;
     transition: transform 0.2s ease;
+    line-height: 0;
   }
 
   .contributor-card:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
     opacity: 1;
   }
 
   .contributor-avatar {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: 1px solid var(--border);
     transition: border-color 0.2s;
+    display: block;
   }
 
   .contributor-card:hover .contributor-avatar {
