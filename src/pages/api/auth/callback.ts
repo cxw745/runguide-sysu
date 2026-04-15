@@ -46,17 +46,18 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       });
     }
 
-    const isSecure = url.protocol === 'https:';
+    const isProd = url.hostname !== 'localhost' && !url.hostname.includes('127.0.0.1');
     const redirectUrl = `${url.origin}/submit?auth=success`;
 
+    // 生产环境必须使用 SameSite=None 和 Secure 才能跨域设置 cookie
     const cookieValue = [
       `gh_token=${data.access_token}`,
       'Path=/',
       'HttpOnly',
-      isSecure ? 'Secure' : '',
-      'SameSite=Lax',
+      'Secure',
+      isProd ? 'SameSite=None' : 'SameSite=Lax',
       'Max-Age=86400',
-    ].filter(Boolean).join('; ');
+    ].join('; ');
 
     return new Response(null, {
       status: 302,
