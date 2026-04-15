@@ -2,17 +2,14 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ redirect, url }) => {
+export const GET: APIRoute = async ({ redirect }) => {
   const clientId = import.meta.env.OAUTH_CLIENT_ID;
   if (!clientId) {
     return new Response(JSON.stringify({ error: 'OAuth client ID not configured' }), { status: 500 });
   }
 
-  // 使用固定的生产环境 URL，避免动态 origin 导致的问题
-  const isProd = url.hostname !== 'localhost' && !url.hostname.includes('127.0.0.1');
-  const redirectUri = isProd 
-    ? 'https://runguide-sysu.vercel.app/api/auth/callback'
-    : `${url.origin}/api/auth/callback`;
+  // 使用固定的生产环境 URL
+  const redirectUri = 'https://runguide-sysu.vercel.app/api/auth/callback';
 
   const params = new URLSearchParams({
     client_id: clientId,
