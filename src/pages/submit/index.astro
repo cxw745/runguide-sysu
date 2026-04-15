@@ -219,9 +219,8 @@ import Footer from '../../components/Footer.astro';
   }
 
   logoutBtn.addEventListener('click', async () => {
-    try {
-      document.cookie = 'gh_token=; Path=/; Max-Age=0';
-    } catch {}
+    // 调用服务器端 logout API 清除 HttpOnly cookie
+    await fetch('/api/auth/logout', { credentials: 'include' });
     currentUser = null;
     showSection(authSection);
   });
