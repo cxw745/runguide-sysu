@@ -1,4 +1,13 @@
 ---
+title: "test修改"
+author: "snow"
+date: "2026-04-15"
+category: "其他"
+major: "sex"
+
+tags: []
+excerpt: "我是test"
+------
 title: "test"
 author: "snow"
 date: "2026-04-15"
