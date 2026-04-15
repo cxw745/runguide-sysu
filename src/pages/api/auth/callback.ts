@@ -1,15 +1,27 @@
 import type { APIRoute } from 'astro';
+import { stateStore } from '../auth/login';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
-  const redirect = url.searchParams.get('redirect') || '/submit';
+  const state = url.searchParams.get('state');
+
+  // 从 stateStore 获取 redirect 路径
+  let redirectPath = '/submit';
+  if (state && stateStore.has(state)) {
+    const stateData = stateStore.get(state);
+    if (stateData && stateData.expires > Date.now()) {
+      redirectPath = stateData.redirect;
+    }
+    // 使用后删除
+    stateStore.delete(state);
+  }
 
   if (!code) {
     return new Response(null, {
       status: 302,
-      headers: { Location: `${redirect}?error=no_code` },
+      headers: { Location: `${redirectPath}?error=no_code` },
     });
   }
 
@@ -19,7 +31,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   if (!clientId || !clientSecret) {
     return new Response(null, {
       status: 302,
-      headers: { Location: `${redirect}?error=oauth_not_configured` },
+      headers: { Location: `${redirectPath}?error=oauth_not_configured` },
     });
   }
 
@@ -43,13 +55,13 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       const errMsg = encodeURIComponent(data.error_description || data.error || 'no_token');
       return new Response(null, {
         status: 302,
-        headers: { Location: `${redirect}?error=${errMsg}` },
+        headers: { Location: `${redirectPath}?error=${errMsg}` },
       });
     }
 
     // 使用固定的生产环境 URL，避免 Vercel Edge 返回 localhost
     const baseUrl = 'https://runguide-sysu.vercel.app';
-    const redirectUrl = `${baseUrl}${redirect}?auth=success`;
+    const redirectUrl = `${baseUrl}${redirectPath}?auth=success`;
 
     // 生产环境必须使用 SameSite=None 和 Secure 才能跨域设置 cookie
     const cookieValue = [
@@ -71,7 +83,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   } catch {
     return new Response(null, {
       status: 302,
-      headers: { Location: `${redirect}?error=auth_failed` },
+      headers: { Location: `${redirectPath}?error=auth_failed` },
     });
   }
 };
