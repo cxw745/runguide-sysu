@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async ({ redirect }) => {
+export const GET: APIRoute = async ({ redirect, url }) => {
   const clientId = import.meta.env.OAUTH_CLIENT_ID;
   if (!clientId) {
     return new Response(JSON.stringify({ error: 'OAuth client ID not configured' }), { status: 500 });
   }
 
-  const redirectUri = `${import.meta.env.SITE || 'http://localhost:4321'}/api/auth/callback`;
+  // 使用当前请求的 origin，确保本地开发时用 localhost
+  const redirectUri = `${url.origin}/api/auth/callback`;
 
   const params = new URLSearchParams({
     client_id: clientId,

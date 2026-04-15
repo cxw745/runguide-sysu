@@ -34,12 +34,13 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
       return redirect(`/submit?error=${encodeURIComponent(data.error_description || data.error)}`);
     }
 
-    const site = import.meta.env.SITE || 'http://localhost:4321';
+    // 使用当前请求的 origin，确保本地开发时跳转回 localhost
+    const site = `${url.origin}`;
 
     cookies.set('gh_token', data.access_token!, {
       path: '/',
       httpOnly: true,
-      secure: true,
+      secure: url.protocol === 'https:',
       sameSite: 'lax',
       maxAge: 86400,
     });
