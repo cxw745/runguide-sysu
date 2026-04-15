@@ -46,8 +46,8 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       });
     }
 
-    const isProd = url.hostname !== 'localhost' && !url.hostname.includes('127.0.0.1');
-    const redirectUrl = `${url.origin}/submit?auth=success`;
+    // 使用固定的生产环境 URL，避免 Vercel Edge 返回 localhost
+    const redirectUrl = 'https://runguide-sysu.vercel.app/submit?auth=success';
 
     // 生产环境必须使用 SameSite=None 和 Secure 才能跨域设置 cookie
     const cookieValue = [
@@ -55,7 +55,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       'Path=/',
       'HttpOnly',
       'Secure',
-      isProd ? 'SameSite=None' : 'SameSite=Lax',
+      'SameSite=None',
       'Max-Age=86400',
     ].join('; ');
 
