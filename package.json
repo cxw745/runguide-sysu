@@ -1,5 +1,5 @@
 {
-  "name": "gdufe-leap-handbook",
+  "name": "sysu-leap-handbook",
   "type": "module",
   "version": "1.0.0",
   "engines": {
@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.1.9",
     "astro": "^6.1.6"
   }
 }

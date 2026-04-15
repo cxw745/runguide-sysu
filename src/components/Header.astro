@@ -15,7 +15,7 @@ const currentPath = Astro.url.pathname;
   <div class="container header-inner">
     <a href="/" class="logo">
       <span class="logo-icon">📖</span>
-      <span class="logo-text">广财飞跃手册</span>
+      <span class="logo-text">中大飞跃手册</span>
     </a>
     <nav class="nav">
       <a href="/" class:list={['nav-link', { active: currentPath === '/' }]}>首页</a>
@@ -111,11 +111,11 @@ const currentPath = Astro.url.pathname;
   }
 
   [data-theme="light"] .header {
-    background-color: rgba(250, 250, 247, 0.85);
+    background-color: rgba(247, 250, 247, 0.85);
   }
 
   [data-theme="dark"] .header {
-    background-color: rgba(12, 11, 29, 0.75);
+    background-color: rgba(10, 26, 16, 0.75);
   }
 
   .header-inner {

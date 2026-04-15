@@ -8,6 +8,7 @@ const articles = defineCollection({
     author: z.string(),
     date: z.string(),
     category: z.enum(['转专业', '保研', '考研', '出国留学', '就业', '其他']),
+    major: z.string().default(''),
     tags: z.array(z.string()).default([]),
     excerpt: z.string(),
   }),

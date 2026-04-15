@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = '广东财经大学飞跃手册 — 由广财学子自发维护的真实经验分享平台' } = Astro.props;
+const { title, description = '中山大学飞跃手册 — 由中大学子自发维护的真实经验分享平台' } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,7 +17,7 @@ const { title, description = '广东财经大学飞跃手册 — 由广财学子
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | 广财飞跃手册</title>
+    <title>{title} | 中大飞跃手册</title>
     <script is:inline>
       (function() {
         const stored = localStorage.getItem('theme');

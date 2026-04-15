@@ -1,19 +1,17 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+import type { APIRoute } from 'astro';
 
-  const token = req.cookies?.gh_token || parseCookie(req.headers.cookie || '')['gh_token'];
+export const POST: APIRoute = async ({ request, cookies }) => {
+  const token = cookies.get('gh_token')?.value;
 
   if (!token) {
-    return res.status(401).json({ error: '请先登录 GitHub' });
+    return new Response(JSON.stringify({ error: '请先登录 GitHub' }), { status: 401 });
   }
 
-  const githubToken = process.env.GITHUB_TOKEN;
-  const repo = process.env.GITHUB_REPO || 'cxw745/runguide';
+  const githubToken = import.meta.env.GITHUB_TOKEN;
+  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runaway745';
 
   if (!githubToken) {
-    return res.status(500).json({ error: '服务端 GitHub Token 未配置' });
+    return new Response(JSON.stringify({ error: '服务端 GitHub Token 未配置' }), { status: 500 });
   }
 
   let user;
@@ -25,22 +23,31 @@ export default async function handler(req, res) {
       },
     });
     if (!userRes.ok) {
-      return res.status(401).json({ error: '登录已过期，请重新登录' });
+      return new Response(JSON.stringify({ error: '登录已过期，请重新登录' }), { status: 401 });
     }
-    user = await userRes.json();
+    user = await userRes.json() as { login: string };
   } catch {
-    return res.status(401).json({ error: '获取用户信息失败' });
+    return new Response(JSON.stringify({ error: '获取用户信息失败' }), { status: 401 });
   }
 
-  const { title, author, category, tags, excerpt, body } = req.body || {};
+  const body = await request.json() as {
+    title: string;
+    author: string;
+    category: string;
+    tags: string[];
+    excerpt: string;
+    body: string;
+  };
 
-  if (!title || !author || !category || !excerpt || !body) {
-    return res.status(400).json({ error: '请填写所有必填字段（标题、作者、分类、摘要、正文）' });
+  const { title, author, category, tags, excerpt, body: articleBody } = body;
+
+  if (!title || !author || !category || !excerpt || !articleBody) {
+    return new Response(JSON.stringify({ error: '请填写所有必填字段（标题、作者、分类、摘要、正文）' }), { status: 400 });
   }
 
   const validCategories = ['转专业', '保研', '考研', '出国留学', '就业', '其他'];
   if (!validCategories.includes(category)) {
-    return res.status(400).json({ error: '分类无效' });
+    return new Response(JSON.stringify({ error: '分类无效' }), { status: 400 });
   }
 
   const slugBase = title
@@ -72,11 +79,11 @@ export default async function handler(req, res) {
     '',
   ].join('\n');
 
-  const fullContent = frontmatter + body;
-  const encodedContent = Buffer.from(fullContent).toString('base64');
+  const fullContent = frontmatter + articleBody;
+  const encodedContent = btoa(unescape(encodeURIComponent(fullContent)));
 
   const ghApi = 'https://api.github.com';
-  const headers = {
+  const headers: Record<string, string> = {
     Authorization: `Bearer ${githubToken}`,
     Accept: 'application/vnd.github.v3+json',
     'Content-Type': 'application/json',
@@ -85,9 +92,9 @@ export default async function handler(req, res) {
   try {
     const mainRef = await fetch(`${ghApi}/repos/${repo}/git/ref/heads/main`, { headers });
     if (!mainRef.ok) {
-      return res.status(500).json({ error: '无法获取主分支信息' });
+      return new Response(JSON.stringify({ error: '无法获取主分支信息' }), { status: 500 });
     }
-    const mainData = await mainRef.json();
+    const mainData = await mainRef.json() as { object: { sha: string } };
     const sha = mainData.object.sha;
 
     const createBranch = await fetch(`${ghApi}/repos/${repo}/git/refs`, {
@@ -100,8 +107,8 @@ export default async function handler(req, res) {
     });
 
     if (!createBranch.ok) {
-      const errData = await createBranch.json();
-      return res.status(500).json({ error: `创建分支失败: ${errData.message}` });
+      const errData = await createBranch.json() as { message: string };
+      return new Response(JSON.stringify({ error: `创建分支失败: ${errData.message}` }), { status: 500 });
     }
 
     const filePath = `src/content/articles/${slug}.md`;
@@ -116,8 +123,8 @@ export default async function handler(req, res) {
     });
 
     if (!createFile.ok) {
-      const errData = await createFile.json();
-      return res.status(500).json({ error: `创建文件失败: ${errData.message}` });
+      const errData = await createFile.json() as { message: string };
+      return new Response(JSON.stringify({ error: `创建文件失败: ${errData.message}` }), { status: 500 });
     }
 
     const createPR = await fetch(`${ghApi}/repos/${repo}/pulls`, {
@@ -146,27 +153,22 @@ export default async function handler(req, res) {
     });
 
     if (!createPR.ok) {
-      const errData = await createPR.json();
-      return res.status(500).json({ error: `创建 PR 失败: ${errData.message}` });
+      const errData = await createPR.json() as { message: string };
+      return new Response(JSON.stringify({ error: `创建 PR 失败: ${errData.message}` }), { status: 500 });
     }
 
-    const prData = await createPR.json();
+    const prData = await createPR.json() as { html_url: string; number: number };
 
-    res.status(200).json({
+    return new Response(JSON.stringify({
       success: true,
       prUrl: prData.html_url,
       prNumber: prData.number,
       message: '投稿成功！已创建 Pull Request，等待管理员审核。',
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    res.status(500).json({ error: '提交失败，请稍后重试' });
+  } catch {
+    return new Response(JSON.stringify({ error: '提交失败，请稍后重试' }), { status: 500 });
   }
-}
-
-function parseCookie(str) {
-  return str.split(';').reduce((acc, pair) => {
-    const [key, ...val] = pair.trim().split('=');
-    acc[key] = val.join('=');
-    return acc;
-  }, {});
-}
+};

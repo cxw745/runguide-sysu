@@ -1,12 +1,10 @@
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+import type { APIRoute } from 'astro';
 
-  const token = req.cookies?.gh_token || parseCookie(req.headers.cookie || '')['gh_token'];
+export const GET: APIRoute = async ({ cookies }) => {
+  const token = cookies.get('gh_token')?.value;
 
   if (!token) {
-    return res.status(401).json({ error: 'Not authenticated' });
+    return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 });
   }
 
   try {
@@ -18,10 +16,10 @@ export default async function handler(req, res) {
     });
 
     if (!userRes.ok) {
-      return res.status(401).json({ error: 'Invalid token' });
+      return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401 });
     }
 
-    const user = await userRes.json();
+    const user = await userRes.json() as { login: string; name: string; avatar_url: string; email: string | null };
 
     let email = user.email;
     if (!email) {
@@ -32,27 +30,22 @@ export default async function handler(req, res) {
         },
       });
       if (emailsRes.ok) {
-        const emails = await emailsRes.json();
+        const emails = await emailsRes.json() as { primary: boolean; email: string }[];
         const primary = emails.find(e => e.primary);
         email = primary ? primary.email : (emails[0] ? emails[0].email : '');
       }
     }
 
-    res.status(200).json({
+    return new Response(JSON.stringify({
       login: user.login,
       name: user.name || user.login,
       avatar_url: user.avatar_url,
       email,
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch user info' });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Failed to fetch user info' }), { status: 500 });
   }
-}
-
-function parseCookie(str) {
-  return str.split(';').reduce((acc, pair) => {
-    const [key, ...val] = pair.trim().split('=');
-    acc[key] = val.join('=');
-    return acc;
-  }, {});
-}
+};

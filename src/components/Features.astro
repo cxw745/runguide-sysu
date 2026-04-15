@@ -3,7 +3,7 @@ const features = [
   {
     icon: '🤝',
     title: '学生自发维护',
-    desc: '由广财学子自发组建和维护，每一篇文章都来自真实的校园经历',
+    desc: '由中大学子自发组建和维护，每一篇文章都来自真实的校园经历',
   },
   {
     icon: '📝',
@@ -13,7 +13,7 @@ const features = [
   {
     icon: '📊',
     title: '10万+ 阅读',
-    desc: '累计 PV 突破 10 万，已成为广财学子学业规划的重要参考',
+    desc: '累计 PV 突破 10 万，已成为中大学子学业规划的重要参考',
   },
   {
     icon: '🌱',
@@ -26,7 +26,7 @@ const features = [
 <section class="features">
   <div class="container">
     <h2 class="section-title">为什么选择飞跃手册</h2>
-    <p class="section-desc">不是官方宣传，不是机构营销——是和你一样的广财人，写下的真实故事</p>
+    <p class="section-desc">不是官方宣传，不是机构营销——是和你一样的中大人，写下的真实故事</p>
     <div class="features-grid">
       {features.map((f, i) => (
         <div class={`feature-card glass-feature feature-card-${i + 1}`} data-tilt="">
@@ -96,22 +96,22 @@ const features = [
     -webkit-backdrop-filter: blur(12px) saturate(160%);
     background: linear-gradient(
       135deg,
-      rgba(255, 252, 240, 0.60) 0%,
-      rgba(255, 248, 228, 0.28) 100%
+      rgba(232, 245, 233, 0.60) 0%,
+      rgba(200, 230, 201, 0.28) 100%
     );
-    border: 1px solid rgba(255, 184, 62, 0.08);
+    border: 1px solid rgba(0, 102, 51, 0.08);
     box-shadow:
-      0 4px 24px rgba(127, 99, 21, 0.03),
+      0 4px 24px rgba(0, 50, 25, 0.03),
       inset 0 1px 0 rgba(255, 255, 255, 0.40);
   }
 
   [data-theme="dark"] .glass-feature {
     background: linear-gradient(
       135deg,
-      rgba(26, 25, 56, 0.65) 0%,
-      rgba(18, 17, 42, 0.45) 100%
+      rgba(20, 46, 30, 0.65) 0%,
+      rgba(15, 34, 24, 0.45) 100%
     );
-    border: 1px solid rgba(139, 124, 246, 0.06);
+    border: 1px solid rgba(76, 175, 80, 0.06);
     box-shadow:
       0 2px 12px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -127,18 +127,18 @@ const features = [
   .feature-card:hover {
     transform: translateY(-4px) !important;
     box-shadow:
-      0 16px 40px rgba(127, 99, 21, 0.08),
+      0 16px 40px rgba(0, 50, 25, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.50),
-      0 0 20px rgba(255, 184, 62, 0.06);
-    border-color: rgba(255, 184, 62, 0.15);
+      0 0 20px rgba(0, 102, 51, 0.06);
+    border-color: rgba(0, 102, 51, 0.15);
   }
 
   [data-theme="dark"] .feature-card:hover {
     box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.03),
-      0 0 16px rgba(139, 124, 246, 0.06);
-    border-color: rgba(139, 124, 246, 0.10);
+      0 0 16px rgba(76, 175, 80, 0.06);
+    border-color: rgba(76, 175, 80, 0.10);
   }
 
   .feature-icon {

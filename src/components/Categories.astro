@@ -1,18 +1,18 @@
 ---
 const categories = [
-  { name: '转专业', icon: '🔄', desc: '跨院系转专业经验、面试准备、学分转换', color: '#4CAF50' },
-  { name: '保研', icon: '🎓', desc: '推免资格、夏令营、材料准备全流程', color: '#2196F3' },
-  { name: '考研', icon: '📚', desc: '院校选择、备考规划、复试调剂经验', color: '#FF5722' },
-  { name: '出国留学', icon: '✈️', desc: '选校定位、语言考试、文书写作、申请时间线', color: '#9C27B0' },
-  { name: '就业', icon: '💼', desc: '校招准备、实习经验、面试技巧、行业选择', color: '#FF9800' },
-  { name: '其他', icon: '💡', desc: '大学生活规划、竞赛经验、考证指南等', color: '#607D8B' },
+  { name: '转专业', icon: '🔄', desc: '跨院系转专业经验、面试准备、学分转换', color: '#006633' },
+  { name: '保研', icon: '🎓', desc: '推免资格、夏令营、材料准备全流程', color: '#2E7D32' },
+  { name: '考研', icon: '📚', desc: '院校选择、备考规划、复试调剂经验', color: '#388E3C' },
+  { name: '出国留学', icon: '✈️', desc: '选校定位、语言考试、文书写作、申请时间线', color: '#43A047' },
+  { name: '就业', icon: '💼', desc: '校招准备、实习经验、面试技巧、行业选择', color: '#4CAF50' },
+  { name: '其他', icon: '💡', desc: '大学生活规划、竞赛经验、考证指南等', color: '#66BB6A' },
 ];
 ---
 
 <section class="categories" id="categories">
   <div class="container">
     <h2 class="section-title">选择你的方向</h2>
-    <p class="section-desc">六大核心分类，覆盖广财学子最关心的学业规划方向</p>
+    <p class="section-desc">六大核心分类，覆盖中大学子最关心的学业规划方向</p>
     <div class="categories-grid">
       {categories.map(cat => (
         <a href={`/articles?category=${encodeURIComponent(cat.name)}`} class="category-card">

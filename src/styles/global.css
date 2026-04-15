@@ -1,18 +1,18 @@
 :root {
-  --bg: #FAFAF7;
-  --bg-alt: #F4F3F0;
+  --bg: #F7FAF7;
+  --bg-alt: #EFF5EF;
   --surface: #ffffff;
   --read-bg: rgba(255, 255, 255, 0.75);
-  --accent: #ffb83e;
-  --accent-light: #fff5d6;
-  --accent-hover: #ffa110;
-  --text-primary: rgba(30, 28, 24, 0.90);
-  --text-secondary: rgba(80, 75, 65, 0.58);
-  --text-muted: rgba(120, 112, 100, 0.40);
-  --border: rgba(30, 28, 24, 0.07);
-  --border-strong: rgba(30, 28, 24, 0.14);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
-  --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --accent: #006633;
+  --accent-light: #E8F5E9;
+  --accent-hover: #004D25;
+  --text-primary: rgba(20, 30, 20, 0.90);
+  --text-secondary: rgba(50, 70, 50, 0.58);
+  --text-muted: rgba(80, 100, 80, 0.40);
+  --border: rgba(0, 102, 51, 0.07);
+  --border-strong: rgba(0, 102, 51, 0.14);
+  --shadow: 0 1px 3px rgba(0, 50, 25, 0.03), 0 4px 12px rgba(0, 50, 25, 0.02);
+  --shadow-hover: 0 2px 8px rgba(0, 50, 25, 0.05), 0 8px 24px rgba(0, 50, 25, 0.04);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -23,18 +23,18 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0c0b1d;
-  --bg-alt: #12112a;
-  --surface: #1a1938;
-  --read-bg: rgba(18, 17, 36, 0.88);
-  --accent: #8b7cf6;
-  --accent-light: rgba(139, 124, 246, 0.12);
-  --accent-hover: #a594fa;
-  --text-primary: rgba(230, 228, 245, 0.90);
-  --text-secondary: rgba(175, 172, 200, 0.60);
-  --text-muted: rgba(130, 128, 160, 0.42);
-  --border: rgba(139, 124, 246, 0.08);
-  --border-strong: rgba(139, 124, 246, 0.16);
+  --bg: #0a1a10;
+  --bg-alt: #0f2218;
+  --surface: #142e1e;
+  --read-bg: rgba(15, 34, 24, 0.88);
+  --accent: #4caf50;
+  --accent-light: rgba(76, 175, 80, 0.12);
+  --accent-hover: #66bb6a;
+  --text-primary: rgba(220, 240, 220, 0.90);
+  --text-secondary: rgba(160, 190, 160, 0.60);
+  --text-muted: rgba(120, 150, 120, 0.42);
+  --border: rgba(76, 175, 80, 0.08);
+  --border-strong: rgba(76, 175, 80, 0.16);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.30), 0 4px 12px rgba(0, 0, 0, 0.20);
   --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.40), 0 8px 24px rgba(0, 0, 0, 0.25);
 }
