@@ -2,6 +2,35 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+// 检查用户是否为管理员
+async function checkAdmin(token: string, repo: string, githubToken: string): Promise<boolean> {
+  try {
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+    if (!userRes.ok) return false;
+
+    const user = await userRes.json() as { login: string };
+
+    const collaboratorsRes = await fetch(`https://api.github.com/repos/${repo}/collaborators`, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!collaboratorsRes.ok) return false;
+
+    const collaborators = await collaboratorsRes.json() as { login: string }[];
+    return collaborators.some(c => c.login.toLowerCase() === user.login.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
 export const POST: APIRoute = async ({ request, cookies }) => {
   const token = cookies.get('gh_token')?.value;
 
@@ -36,7 +65,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     title: string;
     author: string;
     category: string;
-    major: string;
+    major?: string;
     tags: string[];
     excerpt: string;
     body: string;
@@ -52,6 +81,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   if (!validCategories.includes(category)) {
     return new Response(JSON.stringify({ error: '分类无效' }), { status: 400 });
   }
+
+  // 检查是否为管理员
+  const isAdmin = await checkAdmin(token, repo, githubToken);
 
   const slugBase = title
     .toLowerCase()
@@ -101,6 +133,39 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const mainData = await mainRef.json() as { object: { sha: string } };
     const sha = mainData.object.sha;
 
+    const filePath = `src/content/articles/${slug}.md`;
+
+    // 管理员直接提交到主分支
+    if (isAdmin) {
+      const createFile = await fetch(`${ghApi}/repos/${repo}/contents/${filePath}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: `投稿: ${title} (by @${user.login})`,
+          content: encodedContent,
+          branch: 'main',
+        }),
+      });
+
+      if (!createFile.ok) {
+        const errData = await createFile.json() as { message: string };
+        return new Response(JSON.stringify({ error: `创建文件失败: ${errData.message}` }), { status: 500 });
+      }
+
+      const fileData = await createFile.json() as { content: { html_url: string } };
+
+      return new Response(JSON.stringify({
+        success: true,
+        isAdmin: true,
+        fileUrl: fileData.content.html_url,
+        message: '文章已直接发布！',
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 非管理员：创建分支和 PR
     const createBranch = await fetch(`${ghApi}/repos/${repo}/git/refs`, {
       method: 'POST',
       headers,
@@ -115,7 +180,6 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       return new Response(JSON.stringify({ error: `创建分支失败: ${errData.message}` }), { status: 500 });
     }
 
-    const filePath = `src/content/articles/${slug}.md`;
     const createFile = await fetch(`${ghApi}/repos/${repo}/contents/${filePath}`, {
       method: 'PUT',
       headers,
@@ -146,7 +210,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
           `| 标题 | ${title} |`,
           `| 作者 | ${author} |`,
           `| 分类 | ${category} |`,
-          `| 专业 | ${major} |`,
+          major ? `| 专业 | ${major} |` : '',
           `| 投稿人 | @${user.login} |`,
           `| 日期 | ${today} |`,
           '',
@@ -166,6 +230,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     return new Response(JSON.stringify({
       success: true,
+      isAdmin: false,
       prUrl: prData.html_url,
       prNumber: prData.number,
       message: '投稿成功！已创建 Pull Request，等待管理员审核。',

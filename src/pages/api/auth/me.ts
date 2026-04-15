@@ -2,6 +2,40 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+// 缓存协作者列表，避免频繁请求 GitHub API
+let cachedCollaborators: string[] | null = null;
+let cacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 分钟缓存
+
+async function getCollaborators(repo: string, githubToken: string): Promise<string[]> {
+  // 检查缓存
+  if (cachedCollaborators && Date.now() - cacheTime < CACHE_TTL) {
+    return cachedCollaborators;
+  }
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/collaborators`, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!res.ok) {
+      console.error('Failed to fetch collaborators:', await res.text());
+      return cachedCollaborators || [];
+    }
+
+    const collaborators = await res.json() as { login: string }[];
+    cachedCollaborators = collaborators.map(c => c.login.toLowerCase());
+    cacheTime = Date.now();
+    return cachedCollaborators;
+  } catch (error) {
+    console.error('Error fetching collaborators:', error);
+    return cachedCollaborators || [];
+  }
+}
+
 export const GET: APIRoute = async ({ cookies }) => {
   const token = cookies.get('gh_token')?.value;
 
@@ -38,11 +72,22 @@ export const GET: APIRoute = async ({ cookies }) => {
       }
     }
 
+    // 检查用户是否是仓库协作者（管理员）
+    const repo = import.meta.env.GITHUB_REPO || 'cxw745/runguide-sysu';
+    const githubToken = import.meta.env.GITHUB_TOKEN;
+    let isAdmin = false;
+
+    if (githubToken) {
+      const collaborators = await getCollaborators(repo, githubToken);
+      isAdmin = collaborators.includes(user.login.toLowerCase());
+    }
+
     return new Response(JSON.stringify({
       login: user.login,
       name: user.name || user.login,
       avatar_url: user.avatar_url,
       email,
+      isAdmin,
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

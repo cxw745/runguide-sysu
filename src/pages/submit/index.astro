@@ -59,6 +59,10 @@ import Footer from '../../components/Footer.astro';
               </select>
             </div>
             <div class="form-group">
+              <label for="article-major">专业 <span class="required">*</span></label>
+              <input type="text" id="article-major" name="major" required placeholder="例如：计算机科学与技术、金融学" />
+            </div>
+            <div class="form-group">
               <label for="article-tags">标签</label>
               <input type="text" id="article-tags" name="tags" placeholder="用逗号分隔，如：考研,985,备考" />
             </div>
@@ -103,9 +107,9 @@ import Footer from '../../components/Footer.astro';
 
           <div class="form-actions">
             <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
-              📤 提交审核
+              📤 <span id="submit-text">提交审核</span>
             </button>
-            <p class="submit-note">提交后将创建 Pull Request，管理员审核通过后文章自动上线</p>
+            <p class="submit-note" id="submit-note">提交后将创建 Pull Request，管理员审核通过后文章自动上线</p>
           </div>
         </form>
       </div>
@@ -113,10 +117,13 @@ import Footer from '../../components/Footer.astro';
       <div id="success-section" class="success-section" style="display:none;">
         <div class="success-card">
           <div class="success-icon">🎉</div>
-          <h2 class="success-title">投稿成功！</h2>
-          <p class="success-desc">你的文章已提交为 Pull Request，管理员审核通过后将自动上线。</p>
-          <a id="pr-link" href="#" target="_blank" class="btn btn-primary">
+          <h2 class="success-title" id="success-title">投稿成功！</h2>
+          <p class="success-desc" id="success-desc">你的文章已提交为 Pull Request，管理员审核通过后将自动上线。</p>
+          <a id="pr-link" href="#" target="_blank" class="btn btn-primary" style="display:none;">
             查看 Pull Request →
+          </a>
+          <a id="file-link" href="#" target="_blank" class="btn btn-primary" style="display:none;">
+            查看文章文件 →
           </a>
           <button id="new-article-btn" class="btn btn-secondary" style="margin-top:12px;">
             继续投稿
@@ -181,6 +188,9 @@ import Footer from '../../components/Footer.astro';
   const bodyTextarea = document.getElementById('article-body');
   const previewContent = document.getElementById('preview-content');
   const prLink = document.getElementById('pr-link');
+  const fileLink = document.getElementById('file-link');
+  const successTitle = document.getElementById('success-title');
+  const successDesc = document.getElementById('success-desc');
   const newArticleBtn = document.getElementById('new-article-btn');
 
   function showSection(section) {
@@ -215,6 +225,16 @@ import Footer from '../../components/Footer.astro';
       bodyTextarea.value = ARTICLE_TEMPLATE;
       updatePreview();
     }
+    // 根据用户权限更新按钮文字
+    const submitText = document.getElementById('submit-text');
+    const submitNote = document.getElementById('submit-note');
+    if (currentUser.isAdmin) {
+      submitText.textContent = '直接发布';
+      submitNote.textContent = '管理员投稿将直接发布到网站，无需审核';
+    } else {
+      submitText.textContent = '提交审核';
+      submitNote.textContent = '提交后将创建 Pull Request，管理员审核通过后文章自动上线';
+    }
     showSection(editorSection);
   }
 
@@ -228,6 +248,7 @@ import Footer from '../../components/Footer.astro';
   newArticleBtn.addEventListener('click', () => {
     document.getElementById('article-title').value = '';
     document.getElementById('article-category').value = '';
+    document.getElementById('article-major').value = '';
     document.getElementById('article-tags').value = '';
     document.getElementById('article-excerpt').value = '';
     bodyTextarea.value = ARTICLE_TEMPLATE;
@@ -320,11 +341,12 @@ import Footer from '../../components/Footer.astro';
     const title = document.getElementById('article-title').value.trim();
     const author = document.getElementById('article-author').value.trim();
     const category = document.getElementById('article-category').value;
+    const major = document.getElementById('article-major').value.trim();
     const tagsStr = document.getElementById('article-tags').value.trim();
     const excerpt = document.getElementById('article-excerpt').value.trim();
     const body = bodyTextarea.value;
 
-    if (!title || !author || !category || !excerpt || !body) {
+    if (!title || !author || !category || !major || !excerpt || !body) {
       alert('请填写所有必填字段');
       return;
     }
@@ -338,13 +360,27 @@ import Footer from '../../components/Footer.astro';
       const res = await fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, author, category, tags, excerpt, body }),
+        body: JSON.stringify({ title, author, category, major, tags, excerpt, body }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
-        prLink.href = data.prUrl;
+        if (data.isAdmin) {
+          // 管理员直接发布
+          successTitle.textContent = '发布成功！';
+          successDesc.textContent = '您的文章已直接发布到网站。';
+          fileLink.href = data.fileUrl;
+          fileLink.style.display = '';
+          prLink.style.display = 'none';
+        } else {
+          // 普通用户提交 PR
+          successTitle.textContent = '投稿成功！';
+          successDesc.textContent = '你的文章已提交为 Pull Request，管理员审核通过后将自动上线。';
+          prLink.href = data.prUrl;
+          prLink.style.display = '';
+          fileLink.style.display = 'none';
+        }
         showSection(successSection);
       } else {
         alert(data.error || '提交失败，请稍后重试');

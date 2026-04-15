@@ -1,0 +1,895 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<BaseLayout title="文章管理">
+  <Header />
+  <main class="admin-page">
+    <div class="container">
+      <div class="admin-header">
+        <h1 class="admin-title">📋 文章管理</h1>
+        <p class="admin-subtitle">管理员可以查看、编辑和删除所有文章</p>
+      </div>
+
+      <div id="auth-section" class="auth-section">
+        <div class="auth-card">
+          <div class="auth-icon">🔐</div>
+          <h2 class="auth-title">需要管理员权限</h2>
+          <p class="auth-desc">请使用管理员账号登录后访问此页面</p>
+          <a href="/api/auth/login" class="btn btn-primary btn-lg">
+            <svg class="github-icon" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            登录 GitHub
+          </a>
+        </div>
+      </div>
+
+      <div id="loading-section" class="loading-section" style="display:none;">
+        <div class="loading-spinner"></div>
+        <p>正在加载文章列表...</p>
+      </div>
+
+      <div id="articles-section" class="articles-section" style="display:none;">
+        <div class="user-bar">
+          <div class="user-info">
+            <img id="user-avatar" class="user-avatar" src="" alt="" />
+            <span id="user-name" class="user-name"></span>
+            <span class="admin-badge">管理员</span>
+          </div>
+          <div class="user-actions">
+            <a href="/submit" class="btn btn-primary btn-sm">📝 投稿</a>
+            <button id="logout-btn" class="btn btn-secondary btn-sm">退出登录</button>
+          </div>
+        </div>
+
+        <div class="articles-toolbar">
+          <div class="search-box">
+            <input type="text" id="search-input" placeholder="搜索文章标题、作者或分类..." />
+            <button id="search-btn" class="btn btn-secondary btn-sm">🔍 搜索</button>
+          </div>
+          <div class="stats">
+            共 <span id="article-count">0</span> 篇文章
+          </div>
+        </div>
+
+        <div id="articles-list" class="articles-list">
+          <!-- 文章列表将在这里渲染 -->
+        </div>
+      </div>
+
+      <div id="editor-modal" class="modal" style="display:none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>✏️ 编辑文章</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="edit-form" class="edit-form">
+              <input type="hidden" id="edit-slug" />
+              <input type="hidden" id="edit-sha" />
+              
+              <div class="form-grid">
+                <div class="form-group form-group-full">
+                  <label for="edit-title">标题 <span class="required">*</span></label>
+                  <input type="text" id="edit-title" name="title" required />
+                </div>
+                <div class="form-group">
+                  <label for="edit-author">作者 <span class="required">*</span></label>
+                  <input type="text" id="edit-author" name="author" required />
+                </div>
+                <div class="form-group">
+                  <label for="edit-category">分类 <span class="required">*</span></label>
+                  <select id="edit-category" name="category" required>
+                    <option value="转专业">🔄 转专业</option>
+                    <option value="保研">🎓 保研</option>
+                    <option value="考研">📚 考研</option>
+                    <option value="出国留学">✈️ 出国留学</option>
+                    <option value="就业">💼 就业</option>
+                    <option value="其他">💡 其他</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edit-major">专业 <span class="required">*</span></label>
+                  <input type="text" id="edit-major" name="major" required />
+                </div>
+                <div class="form-group form-group-full">
+                  <label for="edit-tags">标签</label>
+                  <input type="text" id="edit-tags" name="tags" placeholder="用逗号分隔，如：考研,985,备考" />
+                </div>
+                <div class="form-group form-group-full">
+                  <label for="edit-excerpt">摘要 <span class="required">*</span></label>
+                  <textarea id="edit-excerpt" name="excerpt" required rows="2"></textarea>
+                </div>
+              </div>
+
+              <div class="editor-container">
+                <div class="editor-header">
+                  <span class="editor-label">正文 (Markdown) <span class="required">*</span></span>
+                </div>
+                <textarea id="edit-content" name="content" required rows="15"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="save-btn" class="btn btn-primary">💾 保存修改</button>
+                <button type="button" id="cancel-btn" class="btn btn-secondary">取消</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  let currentUser = null;
+  let allArticles = [];
+
+  const authSection = document.getElementById('auth-section');
+  const loadingSection = document.getElementById('loading-section');
+  const articlesSection = document.getElementById('articles-section');
+  const articlesList = document.getElementById('articles-list');
+  const userAvatar = document.getElementById('user-avatar');
+  const userName = document.getElementById('user-name');
+  const logoutBtn = document.getElementById('logout-btn');
+  const searchInput = document.getElementById('search-input');
+  const searchBtn = document.getElementById('search-btn');
+  const articleCount = document.getElementById('article-count');
+
+  // 编辑器模态框
+  const editorModal = document.getElementById('editor-modal');
+  const editForm = document.getElementById('edit-form');
+  const modalClose = document.querySelector('.modal-close');
+  const cancelBtn = document.getElementById('cancel-btn');
+
+  function showSection(section) {
+    authSection.style.display = 'none';
+    loadingSection.style.display = 'none';
+    articlesSection.style.display = 'none';
+    section.style.display = '';
+  }
+
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const user = await res.json();
+        if (user.isAdmin) {
+          currentUser = user;
+          showSection(loadingSection);
+          await loadArticles();
+          return;
+        } else {
+          alert('您没有管理员权限');
+        }
+      }
+    } catch {}
+    showSection(authSection);
+  }
+
+  async function loadArticles() {
+    try {
+      const res = await fetch('/api/articles');
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || '加载文章失败');
+        showSection(authSection);
+        return;
+      }
+
+      const data = await res.json();
+      allArticles = data.articles || [];
+      
+      userAvatar.src = currentUser.avatar_url;
+      userAvatar.alt = currentUser.name;
+      userName.textContent = currentUser.name;
+      
+      renderArticles(allArticles);
+      showSection(articlesSection);
+    } catch {
+      alert('加载文章失败');
+      showSection(authSection);
+    }
+  }
+
+  function renderArticles(articles) {
+    articleCount.textContent = articles.length;
+    
+    if (articles.length === 0) {
+      articlesList.innerHTML = '<div class="empty-state">暂无文章</div>';
+      return;
+    }
+
+    articlesList.innerHTML = articles.map(article => `
+      <div class="article-card" data-slug="${article.slug}">
+        <div class="article-header">
+          <h3 class="article-title">${escapeHtml(article.title)}</h3>
+          <span class="article-category">${article.category}</span>
+        </div>
+        <div class="article-meta">
+          <span>👤 ${escapeHtml(article.author)}</span>
+          <span>📅 ${article.date}</span>
+          ${article.major ? `<span>🎓 ${escapeHtml(article.major)}</span>` : ''}
+        </div>
+        <p class="article-excerpt">${escapeHtml(article.excerpt)}</p>
+        ${article.tags?.length ? `
+          <div class="article-tags">
+            ${article.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        ` : ''}
+        <div class="article-actions">
+          <button class="btn btn-primary btn-sm edit-btn" data-slug="${article.slug}">
+            ✏️ 编辑
+          </button>
+          <button class="btn btn-danger btn-sm delete-btn" data-slug="${article.slug}" data-sha="${article.sha}">
+            🗑️ 删除
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    // 绑定编辑按钮事件
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => openEditor(btn.dataset.slug));
+    });
+
+    // 绑定删除按钮事件
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteArticle(btn.dataset.slug, btn.dataset.sha));
+    });
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function filterArticles(query) {
+    const lowerQuery = query.toLowerCase();
+    const filtered = allArticles.filter(article => 
+      article.title.toLowerCase().includes(lowerQuery) ||
+      article.author.toLowerCase().includes(lowerQuery) ||
+      article.category.toLowerCase().includes(lowerQuery) ||
+      (article.major && article.major.toLowerCase().includes(lowerQuery))
+    );
+    renderArticles(filtered);
+  }
+
+  // 打开编辑器
+  function openEditor(slug) {
+    const article = allArticles.find(a => a.slug === slug);
+    if (!article) return;
+
+    document.getElementById('edit-slug').value = article.slug;
+    document.getElementById('edit-sha').value = article.sha;
+    document.getElementById('edit-title').value = article.title;
+    document.getElementById('edit-author').value = article.author;
+    document.getElementById('edit-category').value = article.category;
+    document.getElementById('edit-major').value = article.major || '';
+    document.getElementById('edit-tags').value = article.tags?.join(', ') || '';
+    document.getElementById('edit-excerpt').value = article.excerpt;
+    document.getElementById('edit-content').value = article.content;
+
+    editorModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  // 关闭编辑器
+  function closeEditor() {
+    editorModal.style.display = 'none';
+    document.body.style.overflow = '';
+    editForm.reset();
+  }
+
+  // 保存文章
+  async function saveArticle(e) {
+    e.preventDefault();
+
+    const slug = document.getElementById('edit-slug').value;
+    const sha = document.getElementById('edit-sha').value;
+    const title = document.getElementById('edit-title').value.trim();
+    const author = document.getElementById('edit-author').value.trim();
+    const category = document.getElementById('edit-category').value;
+    const major = document.getElementById('edit-major').value.trim();
+    const tagsStr = document.getElementById('edit-tags').value.trim();
+    const excerpt = document.getElementById('edit-excerpt').value.trim();
+    const content = document.getElementById('edit-content').value;
+
+    if (!title || !author || !category || !major || !excerpt || !content) {
+      alert('请填写所有必填字段');
+      return;
+    }
+
+    const tags = tagsStr ? tagsStr.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
+
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = '⏳ 保存中...';
+
+    try {
+      const res = await fetch(`/api/articles/${slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, author, category, major, tags, excerpt, content, sha }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert('文章更新成功！');
+        closeEditor();
+        await loadArticles();
+      } else {
+        alert(data.error || '更新失败');
+      }
+    } catch {
+      alert('网络错误，请稍后重试');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = '💾 保存修改';
+    }
+  }
+
+  // 删除文章
+  async function deleteArticle(slug, sha) {
+    if (!confirm('确定要删除这篇文章吗？此操作不可恢复。')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/articles/${slug}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sha }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert('文章删除成功！');
+        await loadArticles();
+      } else {
+        alert(data.error || '删除失败');
+      }
+    } catch {
+      alert('网络错误，请稍后重试');
+    }
+  }
+
+  // 事件监听
+  logoutBtn.addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { credentials: 'include' });
+    currentUser = null;
+    showSection(authSection);
+  });
+
+  searchBtn.addEventListener('click', () => {
+    filterArticles(searchInput.value);
+  });
+
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      filterArticles(searchInput.value);
+    }
+  });
+
+  modalClose.addEventListener('click', closeEditor);
+  cancelBtn.addEventListener('click', closeEditor);
+  editForm.addEventListener('submit', saveArticle);
+
+  // 点击遮罩关闭模态框
+  document.querySelector('.modal-overlay').addEventListener('click', closeEditor);
+
+  checkAuth();
+</script>
+
+<style>
+  .admin-page {
+    padding: 48px 0 64px;
+    min-height: 60vh;
+  }
+
+  .admin-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .admin-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .admin-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+
+  .auth-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .auth-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 48px 40px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .auth-icon {
+    font-size: 48px;
+  }
+
+  .auth-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .auth-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .loading-section {
+    text-align: center;
+    padding: 64px;
+  }
+
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .user-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+  }
+
+  .user-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .admin-badge {
+    background-color: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .user-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .articles-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    max-width: 480px;
+  }
+
+  .search-box input {
+    flex: 1;
+    padding: 10px 14px;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+  }
+
+  .stats {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .articles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .article-card {
+    padding: 20px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: box-shadow 0.2s;
+  }
+
+  .article-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .article-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .article-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  .article-category {
+    background-color: var(--accent-light);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .article-excerpt {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .tag {
+    background-color: var(--bg);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .article-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 64px;
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  /* 模态框 */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    position: relative;
+    background-color: var(--surface);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+
+  .modal-close:hover {
+    background-color: var(--bg);
+  }
+
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  /* 编辑表单 */
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group-full {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .required {
+    color: #e53e3e;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 14px;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .editor-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .editor-header {
+    padding: 10px 16px;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  #edit-content {
+    width: 100%;
+    padding: 16px;
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background-color: var(--bg);
+    border: none;
+    resize: vertical;
+    outline: none;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  /* 按钮样式 */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary {
+    background-color: var(--surface);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg);
+  }
+
+  .btn-danger {
+    background-color: #e53e3e;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    opacity: 0.9;
+  }
+
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  .btn-lg {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .github-icon {
+    vertical-align: middle;
+  }
+
+  @media (max-width: 720px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .articles-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-box {
+      max-width: none;
+    }
+
+    .article-header {
+      flex-direction: column;
+    }
+
+    .user-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .user-actions {
+      justify-content: flex-end;
+    }
+  }
+</style>
