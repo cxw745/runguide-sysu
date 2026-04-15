@@ -6,7 +6,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   <main class="about-page">
     <div class="container">
       <div class="about-hero">
-        <h1 class="about-title">📖 关于中大飞跃手册</h1>
+        <h1 class="about-title">关于中大飞跃手册</h1>
         <p class="about-subtitle">由中大学子自发维护的真实经验分享平台</p>
       </div>
 
@@ -185,58 +185,66 @@ import PageLayout from '../layouts/PageLayout.astro';
 
 <style>
   .about-page {
-    padding: 48px 0 64px;
+    padding: 64px 0 80px;
     min-height: 60vh;
   }
 
   .about-hero {
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: 64px;
+    padding: 48px 0;
+    background: linear-gradient(135deg, var(--accent-light) 0%, transparent 100%);
+    border-radius: var(--radius-lg);
   }
 
   .about-title {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 42px;
+    font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
   }
 
   .about-subtitle {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text-secondary);
+    font-weight: 400;
   }
 
   .about-content {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 
   .about-section {
-    margin-bottom: 48px;
+    margin-bottom: 64px;
   }
 
   .section-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 24px;
+    font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 20px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent);
-    display: inline-block;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--accent);
+    display: block;
+    white-space: nowrap;
   }
 
   .content-card {
-    padding: 24px;
+    padding: 32px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .content-card p {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.8;
     color: var(--text-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .content-card p:last-child {
@@ -245,55 +253,63 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   .content-card strong {
     color: var(--text-primary);
+    font-weight: 600;
   }
 
   .action-links {
     display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
   }
 
   /* Mission Grid */
   .mission-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 
   .mission-item {
-    padding: 24px;
+    padding: 32px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .mission-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--accent);
   }
 
   .mission-item .icon {
-    font-size: 32px;
+    font-size: 40px;
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .mission-item h3 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   .mission-item p {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.7;
     color: var(--text-secondary);
     margin: 0;
   }
 
-  /* Directions Grid - 宽屏下使用网格布局 */
+  /* Directions Grid */
   .directions-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 
   .direction-card {
@@ -301,34 +317,35 @@ import PageLayout from '../layouts/PageLayout.astro';
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 24px 20px;
+    padding: 32px 24px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    transition: all 0.2s ease;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .direction-card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .direction-card .icon {
-    font-size: 32px;
-    margin-bottom: 12px;
+    font-size: 40px;
+    margin-bottom: 16px;
   }
 
   .direction-card h3 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   .direction-card p {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.7;
     color: var(--text-secondary);
     margin: 0;
   }
@@ -337,58 +354,68 @@ import PageLayout from '../layouts/PageLayout.astro';
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 24px;
   }
 
   .stat-item {
-    padding: 20px 16px;
+    padding: 32px 24px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--accent);
   }
 
   .stat-item .number {
     display: block;
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
     color: var(--accent);
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .stat-item .label {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-secondary);
+    font-weight: 500;
   }
 
   /* Links Grid */
   .links-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 16px;
+    gap: 24px;
+    margin-top: 24px;
   }
 
   .link-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
+    gap: 16px;
+    padding: 24px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .link-card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .link-card .icon {
-    font-size: 28px;
+    font-size: 32px;
     flex-shrink: 0;
   }
 
@@ -398,14 +425,14 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .link-card h3 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .link-card p {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
     margin: 0;
     white-space: nowrap;
@@ -417,8 +444,8 @@ import PageLayout from '../layouts/PageLayout.astro';
   .friendlinks-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 16px;
+    gap: 16px;
+    margin-top: 24px;
   }
 
   .friend-card {
@@ -426,34 +453,35 @@ import PageLayout from '../layouts/PageLayout.astro';
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 20px 12px;
+    padding: 24px 16px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .friend-card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .friend-card .emoji {
-    font-size: 32px;
-    margin-bottom: 8px;
+    font-size: 36px;
+    margin-bottom: 12px;
   }
 
   .friend-card .name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .friend-card .school {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
   }
 
@@ -462,7 +490,7 @@ import PageLayout from '../layouts/PageLayout.astro';
     border-color: transparent;
   }
 
-  /* Responsive Design */
+  /* Responsive Design - 只保留移动端适配 */
   @media (max-width: 1024px) {
     .directions-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -479,7 +507,8 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   @media (max-width: 768px) {
     .about-title {
-      font-size: 24px;
+      font-size: 28px;
+      white-space: normal;
     }
 
     .about-content {
