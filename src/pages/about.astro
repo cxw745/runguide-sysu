@@ -42,48 +42,36 @@ import PageLayout from '../layouts/PageLayout.astro';
 
         <section class="about-section">
           <h2 class="section-title">覆盖方向</h2>
-          <div class="directions-list">
-            <div class="direction-item">
+          <div class="directions-grid">
+            <div class="direction-card">
               <span class="icon">🔄</span>
-              <div class="content">
-                <h3>转专业</h3>
-                <p>跨院系转专业经验、面试准备、学分转换指南</p>
-              </div>
+              <h3>转专业</h3>
+              <p>跨院系转专业经验、面试准备、学分转换指南</p>
             </div>
-            <div class="direction-item">
+            <div class="direction-card">
               <span class="icon">🎓</span>
-              <div class="content">
-                <h3>保研</h3>
-                <p>推免资格、夏令营、材料准备全流程</p>
-              </div>
+              <h3>保研</h3>
+              <p>推免资格、夏令营、材料准备全流程</p>
             </div>
-            <div class="direction-item">
+            <div class="direction-card">
               <span class="icon">📚</span>
-              <div class="content">
-                <h3>考研</h3>
-                <p>院校选择、备考规划、复试调剂经验</p>
-              </div>
+              <h3>考研</h3>
+              <p>院校选择、备考规划、复试调剂经验</p>
             </div>
-            <div class="direction-item">
+            <div class="direction-card">
               <span class="icon">✈️</span>
-              <div class="content">
-                <h3>出国留学</h3>
-                <p>选校定位、语言考试、文书写作、申请时间线</p>
-              </div>
+              <h3>出国留学</h3>
+              <p>选校定位、语言考试、文书写作、申请时间线</p>
             </div>
-            <div class="direction-item">
+            <div class="direction-card">
               <span class="icon">💼</span>
-              <div class="content">
-                <h3>就业</h3>
-                <p>校招准备、实习经验、面试技巧、行业选择</p>
-              </div>
+              <h3>就业</h3>
+              <p>校招准备、实习经验、面试技巧、行业选择</p>
             </div>
-            <div class="direction-item">
+            <div class="direction-card">
               <span class="icon">💡</span>
-              <div class="content">
-                <h3>其他</h3>
-                <p>大学生活规划、竞赛经验、考证指南等</p>
-              </div>
+              <h3>其他</h3>
+              <p>大学生活规划、竞赛经验、考证指南等</p>
             </div>
           </div>
         </section>
@@ -219,7 +207,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .about-content {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
@@ -301,43 +289,46 @@ import PageLayout from '../layouts/PageLayout.astro';
     margin: 0;
   }
 
-  /* Directions List */
-  .directions-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  /* Directions Grid - 宽屏下使用网格布局 */
+  .directions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 
-  .direction-item {
+  .direction-card {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 16px 20px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px 20px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
+    transition: all 0.2s ease;
   }
 
-  .direction-item .icon {
-    font-size: 24px;
-    flex-shrink: 0;
-    margin-top: 2px;
+  .direction-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
   }
 
-  .direction-item .content {
-    flex: 1;
+  .direction-card .icon {
+    font-size: 32px;
+    margin-bottom: 12px;
   }
 
-  .direction-item h3 {
-    font-size: 15px;
+  .direction-card h3 {
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
-  .direction-item p {
+  .direction-card p {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--text-secondary);
     margin: 0;
   }
@@ -473,6 +464,10 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   /* Responsive Design */
   @media (max-width: 1024px) {
+    .directions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .links-grid {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -492,6 +487,10 @@ import PageLayout from '../layouts/PageLayout.astro';
     }
 
     .mission-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .directions-grid {
       grid-template-columns: 1fr;
     }
 
