@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "framework": "astro",
-  "installCommand": "npm install",
+  "installCommand": "pnpm install",
   "git": {
     "deploymentEnabled": {
       "main": true,

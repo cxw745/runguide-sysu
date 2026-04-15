@@ -2,6 +2,7 @@
   "name": "sysu-leap-handbook",
   "type": "module",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.0.0",
   "engines": {
     "node": "20.x"
   },
