@@ -48,11 +48,11 @@ import Footer from '../../components/Footer.astro';
         <!-- 分类标签 -->
         <div class="category-tabs">
           <button class="category-tab active" data-tab="pending">
-            🔔 待审核
+            待审核
             <span id="pending-badge" class="tab-badge" style="display:none;">0</span>
           </button>
           <button class="category-tab" data-tab="articles">
-            📄 已发布文章
+            已发布
             <span id="articles-badge" class="tab-badge">0</span>
           </button>
         </div>
@@ -1104,7 +1104,7 @@ import Footer from '../../components/Footer.astro';
     font-size: 12px;
     font-weight: 600;
     color: white;
-    background-color: #e53e3e;
+    background-color: var(--accent);
     border-radius: 10px;
   }
 
