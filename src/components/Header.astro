@@ -72,6 +72,25 @@ const currentPath = Astro.url.pathname;
     });
   });
   }
+
+  // 检查用户是否为管理员，如果是则添加管理员入口
+  async function checkAdminAndAddLink() {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (res.ok) {
+        const user = await res.json();
+        if (user.isAdmin) {
+          // 修改 Logo 链接到管理员界面
+          const logo = document.querySelector('.logo');
+          if (logo) {
+            logo.href = '/admin/articles';
+            logo.title = '进入文章管理';
+          }
+        }
+      }
+    } catch {}
+  }
+  checkAdminAndAddLink();
 </script>
 
 <style>

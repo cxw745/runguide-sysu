@@ -79,7 +79,8 @@ function parseFrontmatter(content: string): Record<string, any> {
 
 // 获取文件内容
 function getBody(content: string): string {
-  const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
+  // 匹配 ---\n...\n--- 或 ---\r\n...\r\n--- 格式，后面可以跟换行符或直接跟内容
+  const match = content.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/);
   return match ? match[1].trim() : content;
 }
 

@@ -58,6 +58,18 @@ import Footer from '../../components/Footer.astro';
         <div id="articles-list" class="articles-list">
           <!-- 文章列表将在这里渲染 -->
         </div>
+
+        <div class="section-divider"></div>
+
+        <div class="pr-section">
+          <div class="pr-header">
+            <h2 class="pr-title">🔔 待审核投稿</h2>
+            <p class="pr-subtitle">审核并合并用户提交的 Pull Request</p>
+          </div>
+          <div id="pr-list" class="pr-list">
+            <!-- PR 列表将在这里渲染 -->
+          </div>
+        </div>
       </div>
 
       <div id="editor-modal" class="modal" style="display:none;">
@@ -199,6 +211,10 @@ import Footer from '../../components/Footer.astro';
       userName.textContent = currentUser.name;
       
       renderArticles(allArticles);
+      
+      // 同时加载 PR 列表
+      await loadPRs();
+      
       showSection(articlesSection);
     } catch (err) {
       console.error('Load articles exception:', err);
@@ -371,6 +387,101 @@ import Footer from '../../components/Footer.astro';
       }
     } catch {
       alert('网络错误，请稍后重试');
+    }
+  }
+
+  // PR 相关函数
+  const prList = document.getElementById('pr-list');
+
+  async function loadPRs() {
+    try {
+      const res = await fetch('/api/pulls', { credentials: 'include' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: '未知错误' }));
+        console.error('Load PRs error:', res.status, data);
+        prList.innerHTML = `<div class="empty-state">加载 PR 列表失败: ${data.error || res.status}</div>`;
+        return;
+      }
+
+      const data = await res.json();
+      renderPRs(data.pulls || []);
+    } catch (err) {
+      console.error('Load PRs exception:', err);
+      prList.innerHTML = '<div class="empty-state">加载 PR 列表失败</div>';
+    }
+  }
+
+  function renderPRs(pulls) {
+    if (pulls.length === 0) {
+      prList.innerHTML = '<div class="empty-state">暂无待审核的投稿</div>';
+      return;
+    }
+
+    prList.innerHTML = pulls.map(pr => `
+      <div class="pr-card" data-number="${pr.number}">
+        <div class="pr-header-row">
+          <h3 class="pr-title-text">${escapeHtml(pr.title)}</h3>
+          <span class="pr-number">#${pr.number}</span>
+        </div>
+        <div class="pr-meta">
+          <img class="pr-avatar" src="${pr.user.avatar_url}" alt="${pr.user.login}" />
+          <span>@${pr.user.login}</span>
+          <span>📅 ${new Date(pr.created_at).toLocaleDateString('zh-CN')}</span>
+        </div>
+        <div class="pr-body">${escapeHtml(pr.body || '无描述').substring(0, 200)}${(pr.body || '').length > 200 ? '...' : ''}</div>
+        <div class="pr-actions">
+          <a href="${pr.html_url}" target="_blank" class="btn btn-secondary btn-sm">🔗 在 GitHub 查看</a>
+          <button class="btn btn-primary btn-sm merge-btn" data-number="${pr.number}">✅ 合并</button>
+        </div>
+      </div>
+    `).join('');
+
+    // 绑定合并按钮事件
+    document.querySelectorAll('.merge-btn').forEach(btn => {
+      btn.addEventListener('click', () => mergePR(parseInt(btn.dataset.number)));
+    });
+  }
+
+  async function mergePR(number) {
+    if (!confirm('确定要合并这个 PR 吗？合并后文章将自动发布。')) {
+      return;
+    }
+
+    const btn = document.querySelector(`.merge-btn[data-number="${number}"]`);
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ 合并中...';
+    }
+
+    try {
+      const res = await fetch('/api/pulls', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert('PR 合并成功！文章已发布。');
+        await loadPRs();
+        // 同时刷新文章列表
+        await loadArticles();
+      } else {
+        alert(data.error || '合并失败');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✅ 合并';
+        }
+      }
+    } catch (err) {
+      console.error('Merge PR error:', err);
+      alert('网络错误，请稍后重试');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '✅ 合并';
+      }
     }
   }
 
@@ -875,6 +986,101 @@ import Footer from '../../components/Footer.astro';
 
   .github-icon {
     vertical-align: middle;
+  }
+
+  /* PR 审核区域样式 */
+  .section-divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 40px 0;
+  }
+
+  .pr-section {
+    margin-top: 40px;
+  }
+
+  .pr-header {
+    margin-bottom: 24px;
+  }
+
+  .pr-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .pr-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .pr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pr-card {
+    padding: 20px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: box-shadow 0.2s;
+  }
+
+  .pr-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .pr-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .pr-title-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  .pr-number {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .pr-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pr-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+
+  .pr-body {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+  }
+
+  .pr-actions {
+    display: flex;
+    gap: 8px;
   }
 
   @media (max-width: 720px) {
