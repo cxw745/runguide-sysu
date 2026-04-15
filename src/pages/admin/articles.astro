@@ -227,7 +227,7 @@ import Footer from '../../components/Footer.astro';
           ${article.major ? `<span>🎓 ${escapeHtml(article.major)}</span>` : ''}
         </div>
         <p class="article-excerpt">${escapeHtml(article.excerpt)}</p>
-        ${article.tags?.length ? `
+        ${Array.isArray(article.tags) && article.tags.length ? `
           <div class="article-tags">
             ${article.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
           </div>
