@@ -387,11 +387,11 @@ import PageLayout from '../layouts/PageLayout.astro';
     font-weight: 500;
   }
 
-  /* Links Grid */
+  /* Links Grid - 统一使用单列布局 */
   .links-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: 1fr;
+    gap: 16px;
     margin-top: 24px;
   }
 
@@ -399,7 +399,7 @@ import PageLayout from '../layouts/PageLayout.astro';
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 24px;
+    padding: 20px 24px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -410,12 +410,12 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   .link-card:hover {
     border-color: var(--accent);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .link-card .icon {
-    font-size: 32px;
+    font-size: 28px;
     flex-shrink: 0;
   }
 
@@ -432,57 +432,57 @@ import PageLayout from '../layouts/PageLayout.astro';
   }
 
   .link-card p {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-secondary);
     margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
-  /* Friend Links Grid */
+  /* Friend Links Grid - 统一使用 2 列布局 */
   .friendlinks-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     margin-top: 24px;
   }
 
   .friend-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
-    padding: 24px 16px;
+    text-align: left;
+    padding: 16px 20px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     text-decoration: none;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    gap: 12px;
   }
 
   .friend-card:hover {
     border-color: var(--accent);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .friend-card .emoji {
-    font-size: 36px;
-    margin-bottom: 12px;
+    font-size: 28px;
+    flex-shrink: 0;
   }
 
   .friend-card .name {
     font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    display: block;
   }
 
   .friend-card .school {
     font-size: 13px;
     color: var(--text-secondary);
+    display: block;
   }
 
   .disclaimer {
