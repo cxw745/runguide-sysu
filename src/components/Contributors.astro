@@ -55,28 +55,28 @@
     min-height: 28px;
   }
 
-  .contributor-card {
+  :global(.contributor-card) {
     display: block;
     text-decoration: none;
     transition: transform 0.2s ease;
     line-height: 0;
   }
 
-  .contributor-card:hover {
+  :global(.contributor-card:hover) {
     transform: scale(1.15);
     opacity: 1;
   }
 
-  .contributor-avatar {
-    width: 24px;
-    height: 24px;
+  :global(.contributor-avatar) {
+    width: 24px !important;
+    height: 24px !important;
     border-radius: 50%;
     border: 1px solid var(--border);
     transition: border-color 0.2s;
     display: block;
   }
 
-  .contributor-card:hover .contributor-avatar {
+  :global(.contributor-card:hover .contributor-avatar) {
     border-color: var(--accent);
   }
 
