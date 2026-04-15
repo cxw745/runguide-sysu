@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async () => {
-  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runaway745';
+  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runguide-sysu';
   const githubToken = import.meta.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {

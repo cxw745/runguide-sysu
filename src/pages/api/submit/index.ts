@@ -8,7 +8,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 
   const githubToken = import.meta.env.GITHUB_TOKEN;
-  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runaway745';
+  const repo = import.meta.env.GITHUB_REPO || 'cxw745/runguide-sysu';
 
   if (!githubToken) {
     return new Response(JSON.stringify({ error: '服务端 GitHub Token 未配置' }), { status: 500 });
@@ -42,8 +42,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
   const { title, author, category, major, tags, excerpt, body: articleBody } = body;
 
-  if (!title || !author || !category || !major || !excerpt || !articleBody) {
-    return new Response(JSON.stringify({ error: '请填写所有必填字段（标题、作者、分类、专业、摘要、正文）' }), { status: 400 });
+  if (!title || !author || !category || !excerpt || !articleBody) {
+    return new Response(JSON.stringify({ error: '请填写所有必填字段（标题、作者、分类、摘要、正文）' }), { status: 400 });
   }
 
   const validCategories = ['转专业', '保研', '考研', '出国留学', '就业', '其他'];
@@ -74,12 +74,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     `author: "${author.replace(/"/g, '\\"')}"`,
     `date: "${today}"`,
     `category: "${category}"`,
-    `major: "${major.replace(/"/g, '\\"')}"`,
+    major ? `major: "${major.replace(/"/g, '\\"')}"` : null,
     tagsYaml,
     `excerpt: "${excerpt.replace(/"/g, '\\"')}"`,
     '---',
     '',
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   const fullContent = frontmatter + articleBody;
   const encodedContent = btoa(unescape(encodeURIComponent(fullContent)));
